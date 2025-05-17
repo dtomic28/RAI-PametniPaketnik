@@ -5,4 +5,8 @@
 3. npm start
 4. call on localhost:3001/api
 
-currently only /api/test returns a test string
+working functions:
+/api/token      -> will contain all token related APIs
+/api/user       -> will contain all user related APIs
+/api/lockbox    -> will contain all lockbox related APIs
+
