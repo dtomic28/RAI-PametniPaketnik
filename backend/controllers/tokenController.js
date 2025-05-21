@@ -1,5 +1,5 @@
 module.exports = {
     default: function (req, res) {
-        res.send('default token');
+        res.json({ message: 'default function in tokenController'});
     },
 }

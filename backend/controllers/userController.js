@@ -1,5 +1,5 @@
 module.exports = {
     default: function (req, res) {
-        res.send('default user');
+        res.json({ message: 'default function in userController' });
     },
 }
