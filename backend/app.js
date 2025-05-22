@@ -8,6 +8,7 @@ var indexRouter = require('./routes/index');
 var userRouter = require('./routes/userRoutes');
 var tokenRouter = require('./routes/tokenRoutes');
 var lockboxRouter = require('./routes/lockboxRoutes');
+var transactionController = require('./routes/transactionRoutes');
 
 var app = express();
 
@@ -25,6 +26,7 @@ app.use('/', indexRouter);
 app.use('/api/user', userRouter);
 app.use('/api/token', tokenRouter);
 app.use('/api/lockbox', lockboxRouter);
+app.use('/api/transaction', transactionController);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
