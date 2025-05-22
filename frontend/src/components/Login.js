@@ -4,7 +4,7 @@ import FaceIcon from '@mui/icons-material/Face';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useState, useContext } from 'react';
 import { UserContext } from '../UserContext'; 
-const Login = () => {
+function Login(){
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");

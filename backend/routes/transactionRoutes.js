@@ -3,6 +3,11 @@ var router = express.Router();
 var transactionController = require('../controllers/transactionController.js');
 
 router.get('/', transactionController.default);
+router.get('/getCompleted', transactionController.getAllCompletedTransactions);
+router.get('/getOpen', transactionController.getAllOpenTransactions);
+router.get('/getUnwanted', transactionController.getUnwantedTransactions);
+router.get('/getByBoxID/:id', transactionController.getTransactionByID);
+
 
 module.exports = router;
 
