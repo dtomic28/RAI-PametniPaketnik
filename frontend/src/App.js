@@ -1,8 +1,9 @@
 import React from 'react';
-import { ThemeProvider, createTheme, CssBaseline, Box } from '@mui/material';
+import { ThemeProvider, createTheme, CssBaseline, Box, Tabs, Tab } from '@mui/material';
 import Login from './components/Login';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import Register from './components/Register';
+import Log from './components/Log';
 import Logout from './components/Logout';
 import { UserContext } from './UserContext';
 import { useState } from 'react';
@@ -23,6 +24,8 @@ const [user, setUser] = useState(localStorage.user ? JSON.parse(localStorage.use
   }
 
   return (
+   
+
     <BrowserRouter>
      <UserContext.Provider value={{
         user: user,
@@ -35,12 +38,14 @@ const [user, setUser] = useState(localStorage.user ? JSON.parse(localStorage.use
             <Route path="/login" exact element={<Login />}></Route>
             <Route path="/register" element={<Register />}></Route>
             <Route path="/logout" element={<Logout />}></Route>
+            <Route path="/log" element={<Log/>}></Route>
             
           </Routes>
     </ThemeProvider>
     </UserContext.Provider>
     </BrowserRouter>
   );
+ 
 }
 
 export default App;

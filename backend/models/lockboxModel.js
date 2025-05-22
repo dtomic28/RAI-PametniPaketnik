@@ -4,8 +4,11 @@ var Schema   = mongoose.Schema;
 var lockboxSchema = new Schema({
     'boxID' : String,
     'lastOpenedPerson' : String,
-    'lastOpenedTime' : String,
-    'storedItem' : String
+    'lastOpenedTime' : Date,
+    'storedItem' : {
+        type: Schema.Types.ObjectId,
+        ref: 'item'
+    }
 });
 
 var Lockbox = mongoose.model('lockbox', lockboxSchema);

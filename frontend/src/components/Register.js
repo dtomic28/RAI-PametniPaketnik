@@ -4,7 +4,7 @@ import FaceIcon from '@mui/icons-material/Face';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
-const Register = () => {
+function Register (){
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');

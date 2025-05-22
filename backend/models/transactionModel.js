@@ -3,12 +3,20 @@ var Schema   = mongoose.Schema;
 
 var transactionSchema = new Schema({
     'lockboxID' : String,
-    'sellerID' : String,
-    'buyerID' : String,
-    'itemID' : [String],
-    'startedSellingTime' : String,
-    'finishedSellingTime' : String,
-    'transactionTime' : String
+    'sellerID' : {
+        type: Schema.Types.ObjectId,
+        ref: 'user'
+    },
+    'buyerID' : {
+        type: Schema.Types.ObjectId,
+        ref: 'user'
+    },
+    'itemID' : {
+        type: Schema.Types.ObjectId,
+        ref: 'item'
+    },
+    'startedSellingTime' : Date,
+    'finishedSellingTime' : Date,
 });
 
 var Transaction = mongoose.model('transaction', transactionSchema);
@@ -22,5 +30,4 @@ Model za shranjevanje transakcij
 'itemID'                -> list ID-jev predmetov
 'startedSellingTime'    -> čas ko je prodajalec vstavil predmet v paketnik
 'finishedSellingTime'   -> čas ko je kupec prevzel predmet
-'transactionTime'       -> čas ko se je zakljucilo placilo
 */
