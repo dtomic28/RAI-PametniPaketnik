@@ -3,6 +3,7 @@ import { ThemeProvider, createTheme, CssBaseline, Box } from '@mui/material';
 import Login from './components/Login';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import Register from './components/Register';
+import Logout from './components/Logout';
 import { UserContext } from './UserContext';
 import { useState } from 'react';
 
@@ -33,6 +34,7 @@ const [user, setUser] = useState(localStorage.user ? JSON.parse(localStorage.use
             <Route path="/" exact element={<Box sx={{ textAlign: 'center', mt: 4 }}>Welcome to the App</Box>} />
             <Route path="/login" exact element={<Login />}></Route>
             <Route path="/register" element={<Register />}></Route>
+            <Route path="/logout" element={<Logout />}></Route>
             
           </Routes>
     </ThemeProvider>
