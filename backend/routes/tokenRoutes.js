@@ -3,6 +3,7 @@ var router = express.Router();
 var tokenController = require('../controllers/tokenController.js');
 
 router.get('/', tokenController.default);
+router.get('/requestToken/:BoxID', tokenController.requestToken);
 
 module.exports = router;
 
