@@ -21,6 +21,8 @@ echo "🔄 Stopping old containers (if any)..."
 docker compose --env-file $ENV_FILE down
 
 echo "🔨 Building and starting new containers..."
-docker compose --env-file $ENV_FILE up --build -d
+docker compose --env-file $ENV_FILE build --no-cache
+docker compose --env-file $ENV_FILE up -d
+
 
 echo "✅ Deployment complete!"

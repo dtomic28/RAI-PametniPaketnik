@@ -4,8 +4,13 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
-const DEFAULT_API_URL = "https://default-api-url.com";
-window.REACT_APP_API_URL = process.env.REACT_APP_API_URL || DEFAULT_API_URL;
+window.REACT_APP_API_URL = "";
+
+if (process.env.REACT_APP_API_URL) 
+{
+  window.REACT_APP_API_URL = process.env.REACT_APP_API_URL;
+  console.log(window.REACT_APP_API_URL);
+}
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
