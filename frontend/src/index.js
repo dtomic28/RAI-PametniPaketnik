@@ -4,13 +4,11 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
-window.REACT_APP_API_URL = "";
-
-if (process.env.REACT_APP_API_URL) 
-{
-  window.REACT_APP_API_URL = process.env.REACT_APP_API_URL;
-  console.log(window.REACT_APP_API_URL);
-}
+// Default to an empty string for production
+window.REACT_APP_API_URL =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:3001" // Dev API URL
+    : ""; // Production should have an empty string or production URL
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
