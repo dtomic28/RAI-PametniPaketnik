@@ -28,7 +28,8 @@ function Login() {
       setError("Invalid username or password");
       return;
     }
-    const res = await fetch(`${process.env.REACT_APP_API_URL}/api/user/login`, {
+    const apiUrl = process.env.REACT_APP_API_URL?.trim() || "";
+    const res = await fetch(`${apiUrl}/api/user/login`, {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
