@@ -15,11 +15,7 @@ services:
       - "3001"
 
   frontend:
-    build: 
-      context: ./frontend
-      dockerfile: Dockerfile
-      args:
-        REACT_APP_API_URL: ${REACT_APP_API_URL}
+    build: ./frontend
     env_file:
       - .env.prod
     environment:
