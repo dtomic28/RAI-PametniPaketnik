@@ -29,9 +29,8 @@ function Register() {
       setError("Registration failed");
       return;
     }
-    const apiUrl = process.env.REACT_APP_API_URL?.trim() || "";
     setError("");
-    const res = await fetch(`${apiUrl}/api/user/register`, {
+    const res = await fetch(`${window.REACT_APP_API_URL}/api/user/register`, {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },

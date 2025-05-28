@@ -7,8 +7,7 @@ function Logout() {
   useEffect(function () {
     const logout = async function () {
       userContext.setUserContext(null);
-      const apiUrl = process.env.REACT_APP_API_URL?.trim() || "";
-      const res = await fetch(`${apiUrl}/api/user/logout`);
+      const res = await fetch(`${window.REACT_APP_API_URL}/api/user/logout`);
     };
     logout();
   }, []);

@@ -29,7 +29,6 @@ function Log() {
   const [title, setTitle] = useState("Completed Transactions");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [error, setError] = useState("");
-  const apiUrl = process.env.REACT_APP_API_URL?.trim() || "";
 
   const fetchTransactions = async (url, label) => {
     setTitle(label);
@@ -47,7 +46,7 @@ function Log() {
 
   useEffect(() => {
     fetchTransactions(
-      `${apiUrl}/api/transaction/getCompleted`,
+      `${window.REACT_APP_API_URL}/api/transaction/getCompleted`,
       "Completed Transactions"
     );
   }, []);
@@ -65,7 +64,7 @@ function Log() {
             color="inherit"
             onClick={() =>
               fetchTransactions(
-                `${apiUrl}/api/transaction/getUnwanted`,
+                `${window.REACT_APP_API_URL}/api/transaction/getUnwanted`,
                 "Unwanted Transactions"
               )
             }
@@ -76,7 +75,7 @@ function Log() {
             color="inherit"
             onClick={() =>
               fetchTransactions(
-                `${apiUrl}/api/transaction/getCompleted`,
+                `${window.REACT_APP_API_URL}/api/transaction/getCompleted`,
                 "Completed Transactions"
               )
             }
@@ -87,7 +86,7 @@ function Log() {
             color="inherit"
             onClick={() =>
               fetchTransactions(
-                `${apiUrl}/api/transaction/getOpen`,
+                `${window.REACT_APP_API_URL}/api/transaction/getOpen`,
                 "Open Transactions"
               )
             }
@@ -101,7 +100,7 @@ function Log() {
                 color="inherit"
                 onClick={() =>
                   fetchTransactions(
-                    `${apiUrl}/api/transaction/getByBoxID/${id}`,
+                    `${window.REACT_APP_API_URL}/api/transaction/getByBoxID/${id}`,
                     `Box ${id}`
                   )
                 }
