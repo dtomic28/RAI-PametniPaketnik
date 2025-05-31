@@ -30,11 +30,15 @@ services:
     restart: unless-stopped
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/cloudflare.crt:/etc/ssl/certs/cloudflare.crt:ro
+      - ./nginx/cloudflare.key:/etc/ssl/private/cloudflare.key:ro
     ports:
       - "80:80"
+      - "443:443"
     depends_on:
       - frontend
       - backend
+
 
 volumes:
   frontend-build:

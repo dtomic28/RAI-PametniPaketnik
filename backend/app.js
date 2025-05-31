@@ -21,6 +21,7 @@ var allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
   "http://192.168.64.147",
+  "https://pp.dtomic.com"
 ];
 app.use(
   cors({
