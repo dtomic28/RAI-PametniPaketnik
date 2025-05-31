@@ -1,7 +1,7 @@
 /**
  * @swagger
  * tags:
- *   name: Tokens
+ *   name: Token
  *   description: Token request and validation
  */
 

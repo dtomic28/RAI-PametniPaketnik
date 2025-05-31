@@ -1,7 +1,7 @@
 /**
  * @swagger
  * tags:
- *   name: Users
+ *   name: User
  *   description: User registration and authentication
  */
 

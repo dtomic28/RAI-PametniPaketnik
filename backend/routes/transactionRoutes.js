@@ -1,7 +1,7 @@
 /**
  * @swagger
  * tags:
- *   name: Transactions
+ *   name: Transaction
  *   description: Endpoints for handling item transactions
  */
 
