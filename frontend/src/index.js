@@ -4,6 +4,7 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
+
 // Default to an empty string for production
 window.REACT_APP_API_URL =
   process.env.NODE_ENV === "development"
@@ -11,6 +12,7 @@ window.REACT_APP_API_URL =
     : ""; // Production should have an empty string or production URL
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+
 root.render(
   <React.StrictMode>
     <App />

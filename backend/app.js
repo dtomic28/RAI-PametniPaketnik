@@ -16,11 +16,12 @@ var transactionController = require("./routes/transactionRoutes");
 var app = express();
 
 var cors = require("cors");
-var allowedOrigins = ["http://localhost:3000", "http://localhost:3001"];
+var allowedOrigins = ["http://localhost:3000", "http://localhost:3001", "http://192.168.64.147"];
 app.use(
   cors({
     credentials: true,
     origin: function (origin, callback) {
+      console.log('Request origin:', origin);
       if (!origin) return callback(null, true);
       if (allowedOrigins.indexOf(origin) === -1) {
         var msg =

@@ -46,7 +46,7 @@ function Log() {
 
   useEffect(() => {
     fetchTransactions(
-      `${window.REACT_APP_API_URL}/api/transaction/getCompleted`,
+      `${window.REACT_APP_API_URL}/transaction/getCompleted`,
       "Completed Transactions"
     );
   }, []);
@@ -64,7 +64,7 @@ function Log() {
             color="inherit"
             onClick={() =>
               fetchTransactions(
-                `${window.REACT_APP_API_URL}/api/transaction/getUnwanted`,
+                `${window.REACT_APP_API_URL}/transaction/getUnwanted`,
                 "Unwanted Transactions"
               )
             }
@@ -75,7 +75,7 @@ function Log() {
             color="inherit"
             onClick={() =>
               fetchTransactions(
-                `${window.REACT_APP_API_URL}/api/transaction/getCompleted`,
+                `${window.REACT_APP_API_URL}/transaction/getCompleted`,
                 "Completed Transactions"
               )
             }
@@ -86,7 +86,7 @@ function Log() {
             color="inherit"
             onClick={() =>
               fetchTransactions(
-                `${window.REACT_APP_API_URL}/api/transaction/getOpen`,
+                `${window.REACT_APP_API_URL}/transaction/getOpen`,
                 "Open Transactions"
               )
             }
@@ -100,7 +100,7 @@ function Log() {
                 color="inherit"
                 onClick={() =>
                   fetchTransactions(
-                    `${window.REACT_APP_API_URL}/api/transaction/getByBoxID/${id}`,
+                    `${window.REACT_APP_API_URL}/transaction/getByBoxID/${id}`,
                     `Box ${id}`
                   )
                 }
