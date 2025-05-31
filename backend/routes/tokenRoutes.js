@@ -1,18 +1,43 @@
-var express = require('express');
-var router = express.Router();
-var tokenController = require('../controllers/tokenController.js');
+/**
+ * @swagger
+ * tags:
+ *   name: Tokens
+ *   description: Token request and validation
+ */
 
-router.get('/', tokenController.default);
-router.get('/requestToken/:BoxID', tokenController.requestToken);
+var express = require("express");
+var router = express.Router();
+var tokenController = require("../controllers/tokenController.js");
+
+/**
+ * @swagger
+ * /tokens:
+ *   get:
+ *     summary: Default token route
+ *     tags: [Tokens]
+ *     responses:
+ *       200:
+ *         description: OK
+ */
+router.get("/", tokenController.default);
+
+/**
+ * @swagger
+ * /tokens/requestToken/{BoxID}:
+ *   get:
+ *     summary: Request a token for a specific box
+ *     tags: [Tokens]
+ *     parameters:
+ *       - in: path
+ *         name: BoxID
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the box to request token for
+ *     responses:
+ *       200:
+ *         description: Token data
+ */
+router.get("/requestToken/:BoxID", tokenController.requestToken);
 
 module.exports = router;
-
-/*
-Backend sistema bo razvit kot REST API, ki podpira naslednje funkcionalnosti:
-• Upravljanje uporabnikov, predmetov in rezervacij.
-• Povezava z face recognition API-jem iz predmeta ORV
-• Povezava z API-jem za odpiranje škatle
-• Ogled slik, posnetih iz paketnika
-• Spremljanje dogodkov in statusov predala
-*/
-

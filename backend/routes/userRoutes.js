@@ -1,21 +1,60 @@
-var express = require('express');
-var router = express.Router();
-var userController = require('../controllers/userController.js');
-console.log("userRoutes.js");
-router.get('/', userController.default);
+/**
+ * @swagger
+ * tags:
+ *   name: Users
+ *   description: User registration and authentication
+ */
 
-router.post('/register', userController.create);
-router.post('/login', userController.login);
-router.get('/logout', userController.logout);
+var express = require("express");
+var router = express.Router();
+var userController = require("../controllers/userController.js");
+
+/**
+ * @swagger
+ * /users:
+ *   get:
+ *     summary: Default users route
+ *     tags: [Users]
+ *     responses:
+ *       200:
+ *         description: OK
+ */
+router.get("/", userController.default);
+
+/**
+ * @swagger
+ * /users/register:
+ *   post:
+ *     summary: Register a new user
+ *     tags: [Users]
+ *     responses:
+ *       201:
+ *         description: User registered
+ */
+router.post("/register", userController.create);
+
+/**
+ * @swagger
+ * /users/login:
+ *   post:
+ *     summary: Log in a user
+ *     tags: [Users]
+ *     responses:
+ *       200:
+ *         description: Login successful
+ */
+router.post("/login", userController.login);
+
+/**
+ * @swagger
+ * /users/logout:
+ *   get:
+ *     summary: Log out the current user
+ *     tags: [Users]
+ *     responses:
+ *       200:
+ *         description: Logout successful
+ */
+router.get("/logout", userController.logout);
 
 module.exports = router;
-
-/*
-Backend sistema bo razvit kot REST API, ki podpira naslednje funkcionalnosti:
-• Upravljanje uporabnikov, predmetov in rezervacij.
-• Povezava z face recognition API-jem iz predmeta ORV
-• Povezava z API-jem za odpiranje škatle
-• Ogled slik, posnetih iz paketnika
-• Spremljanje dogodkov in statusov predala
-*/
-

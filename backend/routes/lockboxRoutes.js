@@ -1,17 +1,24 @@
-var express = require('express');
-var router = express.Router();
-var lockboxController = require('../controllers/lockboxController.js');
+/**
+ * @swagger
+ * tags:
+ *   name: Lockbox
+ *   description: Endpoints for managing the lockbox
+ */
 
-router.get('/', lockboxController.default);
+var express = require("express");
+var router = express.Router();
+var lockboxController = require("../controllers/lockboxController.js");
+
+/**
+ * @swagger
+ * /lockbox:
+ *   get:
+ *     summary: Default lockbox route
+ *     tags: [Lockbox]
+ *     responses:
+ *       200:
+ *         description: OK
+ */
+router.get("/", lockboxController.default);
 
 module.exports = router;
-
-/*
-Backend sistema bo razvit kot REST API, ki podpira naslednje funkcionalnosti:
-• Upravljanje uporabnikov, predmetov in rezervacij.
-• Povezava z face recognition API-jem iz predmeta ORV
-• Povezava z API-jem za odpiranje škatle
-• Ogled slik, posnetih iz paketnika
-• Spremljanje dogodkov in statusov predala
-*/
-

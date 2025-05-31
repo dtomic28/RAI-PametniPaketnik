@@ -1,22 +1,79 @@
-var express = require('express');
+/**
+ * @swagger
+ * tags:
+ *   name: Transactions
+ *   description: Endpoints for handling item transactions
+ */
+
+var express = require("express");
 var router = express.Router();
-var transactionController = require('../controllers/transactionController.js');
+var transactionController = require("../controllers/transactionController.js");
 
-router.get('/', transactionController.default);
-router.get('/getCompleted', transactionController.getAllCompletedTransactions);
-router.get('/getOpen', transactionController.getAllOpenTransactions);
-router.get('/getUnwanted', transactionController.getUnwantedTransactions);
-router.get('/getByBoxID/:id', transactionController.getTransactionByID);
+/**
+ * @swagger
+ * /transactions:
+ *   get:
+ *     summary: Default transaction route
+ *     tags: [Transactions]
+ *     responses:
+ *       200:
+ *         description: OK
+ */
+router.get("/", transactionController.default);
 
+/**
+ * @swagger
+ * /transactions/getCompleted:
+ *   get:
+ *     summary: Get all completed transactions
+ *     tags: [Transactions]
+ *     responses:
+ *       200:
+ *         description: List of completed transactions
+ */
+router.get("/getCompleted", transactionController.getAllCompletedTransactions);
+
+/**
+ * @swagger
+ * /transactions/getOpen:
+ *   get:
+ *     summary: Get all open transactions
+ *     tags: [Transactions]
+ *     responses:
+ *       200:
+ *         description: List of open transactions
+ */
+router.get("/getOpen", transactionController.getAllOpenTransactions);
+
+/**
+ * @swagger
+ * /transactions/getUnwanted:
+ *   get:
+ *     summary: Get all unwanted transactions
+ *     tags: [Transactions]
+ *     responses:
+ *       200:
+ *         description: List of unwanted transactions
+ */
+router.get("/getUnwanted", transactionController.getUnwantedTransactions);
+
+/**
+ * @swagger
+ * /transactions/getByBoxID/{id}:
+ *   get:
+ *     summary: Get transaction by Box ID
+ *     tags: [Transactions]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Box ID to look up
+ *     responses:
+ *       200:
+ *         description: Transaction data
+ */
+router.get("/getByBoxID/:id", transactionController.getTransactionByID);
 
 module.exports = router;
-
-/*
-Backend sistema bo razvit kot REST API, ki podpira naslednje funkcionalnosti:
-• Upravljanje uporabnikov, predmetov in rezervacij.
-• Povezava z face recognition API-jem iz predmeta ORV
-• Povezava z API-jem za odpiranje škatle
-• Ogled slik, posnetih iz paketnika
-• Spremljanje dogodkov in statusov predala
-*/
-

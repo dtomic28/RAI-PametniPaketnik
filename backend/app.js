@@ -3,11 +3,12 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
+const swaggerUi = require("swagger-ui-express");
+const swaggerJsdoc = require("swagger-jsdoc");
 
 require("dotenv").config(); // Load .env if present
 const { db, mongoURI } = require("./db"); // This sets up the connection
 
-var indexRouter = require("./routes/index");
 var userRouter = require("./routes/userRoutes");
 var tokenRouter = require("./routes/tokenRoutes");
 var lockboxRouter = require("./routes/lockboxRoutes");
@@ -16,12 +17,16 @@ var transactionController = require("./routes/transactionRoutes");
 var app = express();
 
 var cors = require("cors");
-var allowedOrigins = ["http://localhost:3000", "http://localhost:3001", "http://192.168.64.147"];
+var allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "http://192.168.64.147",
+];
 app.use(
   cors({
     credentials: true,
     origin: function (origin, callback) {
-      console.log('Request origin:', origin);
+      console.log("Request origin:", origin);
       if (!origin) return callback(null, true);
       if (allowedOrigins.indexOf(origin) === -1) {
         var msg =
@@ -59,7 +64,25 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.use("/api/", indexRouter);
+const swaggerOptions = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Pametni Paketnik API",
+      version: "1.0.0",
+      description: "API Dokumentacija za pametni paketnik.",
+    },
+    servers: [
+      {
+        url: "http://pp.dtomic.com", // Change if you're behind reverse proxy or use HTTPS
+      },
+    ],
+  },
+  apis: ["./routes/*.js"], // Adjust to your route files
+};
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+
+app.use("/api/", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api/user", userRouter);
 app.use("/api/token", tokenRouter);
 app.use("/api/lockbox", lockboxRouter);
