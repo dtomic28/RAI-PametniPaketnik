@@ -14,7 +14,7 @@ var userController = require("../controllers/userController.js");
  * /user:
  *   get:
  *     summary: Default users route
- *     tags: [Users]
+ *     tags: [User]
  *     responses:
  *       200:
  *         description: OK
@@ -26,7 +26,7 @@ router.get("/", userController.default);
  * /user/register:
  *   post:
  *     summary: Register a new user
- *     tags: [Users]
+ *     tags: [User]
  *     responses:
  *       201:
  *         description: User registered
@@ -38,7 +38,7 @@ router.post("/register", userController.create);
  * /user/login:
  *   post:
  *     summary: Log in a user
- *     tags: [Users]
+ *     tags: [User]
  *     responses:
  *       200:
  *         description: Login successful
@@ -50,7 +50,7 @@ router.post("/login", userController.login);
  * /user/logout:
  *   get:
  *     summary: Log out the current user
- *     tags: [Users]
+ *     tags: [User]
  *     responses:
  *       200:
  *         description: Logout successful

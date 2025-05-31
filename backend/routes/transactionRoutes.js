@@ -14,7 +14,7 @@ var transactionController = require("../controllers/transactionController.js");
  * /transaction:
  *   get:
  *     summary: Default transaction route
- *     tags: [Transactions]
+ *     tags: [Transaction]
  *     responses:
  *       200:
  *         description: OK
@@ -26,7 +26,7 @@ router.get("/", transactionController.default);
  * /transaction/getCompleted:
  *   get:
  *     summary: Get all completed transactions
- *     tags: [Transactions]
+ *     tags: [Transaction]
  *     responses:
  *       200:
  *         description: List of completed transactions
@@ -38,7 +38,7 @@ router.get("/getCompleted", transactionController.getAllCompletedTransactions);
  * /transaction/getOpen:
  *   get:
  *     summary: Get all open transactions
- *     tags: [Transactions]
+ *     tags: [Transaction]
  *     responses:
  *       200:
  *         description: List of open transactions
@@ -50,7 +50,7 @@ router.get("/getOpen", transactionController.getAllOpenTransactions);
  * /transaction/getUnwanted:
  *   get:
  *     summary: Get all unwanted transactions
- *     tags: [Transactions]
+ *     tags: [Transaction]
  *     responses:
  *       200:
  *         description: List of unwanted transactions
@@ -62,7 +62,7 @@ router.get("/getUnwanted", transactionController.getUnwantedTransactions);
  * /transaction/getByBoxID/{id}:
  *   get:
  *     summary: Get transaction by Box ID
- *     tags: [Transactions]
+ *     tags: [Transaction]
  *     parameters:
  *       - in: path
  *         name: id

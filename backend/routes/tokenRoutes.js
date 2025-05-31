@@ -14,7 +14,7 @@ var tokenController = require("../controllers/tokenController.js");
  * /token:
  *   get:
  *     summary: Default token route
- *     tags: [Tokens]
+ *     tags: [Token]
  *     responses:
  *       200:
  *         description: OK
@@ -26,7 +26,7 @@ router.get("/", tokenController.default);
  * /token/requestToken/{BoxID}:
  *   get:
  *     summary: Request a token for a specific box
- *     tags: [Tokens]
+ *     tags: [Token]
  *     parameters:
  *       - in: path
  *         name: BoxID
