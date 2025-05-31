@@ -74,7 +74,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: "http://pp.dtomic.com", // Change if you're behind reverse proxy or use HTTPS
+        url: "http://pp.dtomic.com/api/", // Change if you're behind reverse proxy or use HTTPS
       },
     ],
   },
@@ -82,7 +82,7 @@ const swaggerOptions = {
 };
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
-app.use("/api/", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api/user", userRouter);
 app.use("/api/token", tokenRouter);
 app.use("/api/lockbox", lockboxRouter);
