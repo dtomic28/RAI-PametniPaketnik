@@ -11,7 +11,7 @@ var tokenController = require("../controllers/tokenController.js");
 
 /**
  * @swagger
- * /tokens:
+ * /token:
  *   get:
  *     summary: Default token route
  *     tags: [Tokens]
@@ -23,7 +23,7 @@ router.get("/", tokenController.default);
 
 /**
  * @swagger
- * /tokens/requestToken/{BoxID}:
+ * /token/requestToken/{BoxID}:
  *   get:
  *     summary: Request a token for a specific box
  *     tags: [Tokens]

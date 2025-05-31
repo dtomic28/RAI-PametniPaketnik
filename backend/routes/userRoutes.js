@@ -11,7 +11,7 @@ var userController = require("../controllers/userController.js");
 
 /**
  * @swagger
- * /users:
+ * /user:
  *   get:
  *     summary: Default users route
  *     tags: [Users]
@@ -23,7 +23,7 @@ router.get("/", userController.default);
 
 /**
  * @swagger
- * /users/register:
+ * /user/register:
  *   post:
  *     summary: Register a new user
  *     tags: [Users]
@@ -35,7 +35,7 @@ router.post("/register", userController.create);
 
 /**
  * @swagger
- * /users/login:
+ * /user/login:
  *   post:
  *     summary: Log in a user
  *     tags: [Users]
@@ -47,7 +47,7 @@ router.post("/login", userController.login);
 
 /**
  * @swagger
- * /users/logout:
+ * /user/logout:
  *   get:
  *     summary: Log out the current user
  *     tags: [Users]
