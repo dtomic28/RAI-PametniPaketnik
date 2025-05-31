@@ -20,6 +20,6 @@ docker compose --env-file $ENV_FILE down
 echo "🚀 Starting containers without rebuilding..."
 docker compose --env-file $ENV_FILE up -d
 
-docker image prune -a
+docker image prune -a -f
 
 echo "✅ Deployment complete!"

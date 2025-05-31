@@ -24,6 +24,6 @@ echo "🔨 Building and starting new containers..."
 docker compose --env-file $ENV_FILE build
 docker compose --env-file $ENV_FILE up -d
 
-docker image prune -a
+docker image prune -a -f
 
 echo "✅ Deployment complete!"
