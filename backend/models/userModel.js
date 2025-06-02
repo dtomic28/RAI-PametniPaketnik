@@ -39,6 +39,16 @@ userSchema.statics.authenticate = async function(username, password, callback) {
     }
 };
 
+userSchema.statics.getAllUsernames = async function() {
+    try {
+        const users = await this.find({}, 'username').exec();
+        return users.map(user => user.username);
+    }
+    catch (err) {
+        throw err;
+    }
+}
+
 var User = mongoose.model('user', userSchema);
 module.exports = User;
 

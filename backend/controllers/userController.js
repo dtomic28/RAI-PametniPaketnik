@@ -42,7 +42,14 @@ module.exports = {
                 }
             });
         }
+    },
+    getAllUsernames: function(req, res, next) {
+        UserModel.getAllUsernames()
+            .then(usernames => {
+                return res.json(usernames);
+            })
+            .catch(err => {
+                return next(err);
+            });
     }
-
-
 }

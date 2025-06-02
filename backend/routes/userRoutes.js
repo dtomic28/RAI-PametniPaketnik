@@ -57,4 +57,16 @@ router.post("/login", userController.login);
  */
 router.get("/logout", userController.logout);
 
+/**
+ * @swagger
+ * /user/getAllUsernames:
+ *   get:
+ *     summary: Get a list of all usernames currently in use
+ *     tags: [User]
+ *     responses:
+ *       200:
+ *         description: Got all usernames successfully
+ */
+router.get("/getAllUsernames", userController.getAllUsernames);
+
 module.exports = router;
