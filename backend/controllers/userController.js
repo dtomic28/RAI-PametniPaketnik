@@ -43,13 +43,18 @@ module.exports = {
             });
         }
     },
-    getAllUsernames: function(req, res, next) {
+    usernameExists: function(req, res, next) {
+        const username = req.params.username;
+        if (!username) {
+            return res.status(400).json({ error: 'Username not found' });
+        }
         UserModel.getAllUsernames()
             .then(usernames => {
-                return res.json(usernames);
+                const exists = usernames.includes(username);
+                return res.status(200).json({ exists });
             })
             .catch(err => {
-                return next(err);
+                return res.status(401).json({ error: 'Database error' });
             });
     }
 }

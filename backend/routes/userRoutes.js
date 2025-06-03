@@ -59,7 +59,7 @@ router.get("/logout", userController.logout);
 
 /**
  * @swagger
- * /user/getAllUsernames:
+ * /user/usernameExists:
  *   get:
  *     summary: Get a list of all usernames currently in use
  *     tags: [User]
@@ -67,6 +67,6 @@ router.get("/logout", userController.logout);
  *       200:
  *         description: Got all usernames successfully
  */
-router.get("/getAllUsernames", userController.getAllUsernames);
+router.get("/usernameExists/:username", userController.usernameExists);
 
 module.exports = router;
