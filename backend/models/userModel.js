@@ -1,55 +1,40 @@
-var mongoose = require('mongoose');
-var bcrypt = require('bcrypt');
-var Schema   = mongoose.Schema;
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
+const Schema = mongoose.Schema;
 
-var userSchema = new Schema({
-	'username' : String,
-	'password' : String,
-	'email' : String,
-    'numberOfTransactions' : Number
+const userSchema = new Schema({
+  username: String,
+  password: String,
+  email: String,
+  numberOfTransactions: Number,
 });
 
-userSchema.pre('save', function(next){
-	var user = this;
-	bcrypt.hash(user.password, 10, function(err, hash){
-		if(err){
-			return next(err);
-		}
-		user.password = hash;
-		next();
-	});
+// Pre-save hook to hash password
+userSchema.pre("save", function (next) {
+  const user = this;
+  bcrypt.hash(user.password, 10, function (err, hash) {
+    if (err) return next(err);
+    user.password = hash;
+    next();
+  });
 });
 
-userSchema.statics.authenticate = async function(username, password, callback) {
-    try {
-        const user = await this.findOne({ username: username }).exec();
-        if (!user) {
-            const err = new Error("User not found.");
-            err.status = 401;
-            return callback(err);
-        }
-        const result = await bcrypt.compare(password, user.password);
-        if (result === true) {
-            return callback(null, user);
-        } else {
-            return callback();
-        }
-    } catch (err) {
-        return callback(err);
-    }
+// Promise-based authenticate function
+userSchema.statics.authenticate = async function (username, password) {
+  const user = await this.findOne({ username }).exec();
+  if (!user) return null;
+
+  const isMatch = await bcrypt.compare(password, user.password);
+  return isMatch ? user : null;
 };
 
-userSchema.statics.getAllUsernames = async function() {
-    try {
-        const users = await this.find({}, 'username').exec();
-        return users.map(user => user.username);
-    }
-    catch (err) {
-        throw err;
-    }
-}
+// Get all usernames
+userSchema.statics.getAllUsernames = async function () {
+  const users = await this.find({}, "username").exec();
+  return users.map((user) => user.username);
+};
 
-var User = mongoose.model('user', userSchema);
+const User = mongoose.model("user", userSchema);
 module.exports = User;
 
 /*
