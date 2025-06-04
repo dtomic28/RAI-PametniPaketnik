@@ -90,6 +90,7 @@ app.use("/api/token", tokenRouter);
 app.use("/api/lockbox", lockboxRouter);
 app.use("/api/transaction", transactionController);
 app.use("/api/item", itemsController);
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

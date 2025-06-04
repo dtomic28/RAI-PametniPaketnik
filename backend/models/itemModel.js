@@ -10,6 +10,10 @@ var itemSchema = new Schema({
     'isSelling' : {
         type: Boolean,
         default: true
+    },
+    'imageLink': {
+        type: String,
+        default: 'images/default.jpg'
     }
 });
 
@@ -21,4 +25,5 @@ model za shranjevanje posameznih predmetov
 'description'   -> opis predmeta
 'price'         -> cena predmeta
 'weight'        -> teža predmeta
+'isSelling'     -> ali je predmet na voljo za prodajo (default: true)
 */
