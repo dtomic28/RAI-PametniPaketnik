@@ -4,10 +4,10 @@
  *   name: Lockbox
  *   description: Endpoints for managing the lockbox
  */
-
 var express = require("express");
 var router = express.Router();
 var lockboxController = require("../controllers/lockboxController.js");
+const { authenticateJWT } = require("../middleware/auth");
 
 /**
  * @swagger
@@ -19,6 +19,6 @@ var lockboxController = require("../controllers/lockboxController.js");
  *       200:
  *         description: OK
  */
-router.get("/", lockboxController.default);
+router.get("/", authenticateJWT, lockboxController.default); //An example how to use protected route.
 
 module.exports = router;

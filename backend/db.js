@@ -6,6 +6,8 @@ const requiredVars = [
   "MONGO_PASS",
   "MONGO_DB",
   "MONGO_URI_TEMPLATE",
+  "JWT_SECRET",
+  "ORV_API_LINK",
 ];
 const missing = requiredVars.filter((name) => !process.env[name]);
 
