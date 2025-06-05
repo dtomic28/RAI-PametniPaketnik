@@ -5,6 +5,7 @@ import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import Register from './components/Register';
 import Log from './components/Log';
 import Logout from './components/Logout';
+import Dashboard from './components/Dashboard';
 import { UserContext } from './UserContext';
 import { useState } from 'react';
 
@@ -34,7 +35,7 @@ const [user, setUser] = useState(localStorage.user ? JSON.parse(localStorage.use
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <Routes>
-            <Route path="/" exact element={<Box sx={{ textAlign: 'center', mt: 4 }}>Welcome to the App</Box>} />
+            <Route path="/" exact element={<Dashboard/>}/>
             <Route path="/login" exact element={<Login />}></Route>
             <Route path="/register" element={<Register />}></Route>
             <Route path="/logout" element={<Logout />}></Route>

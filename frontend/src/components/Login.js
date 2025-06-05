@@ -38,7 +38,7 @@ function Login() {
       }),
     });
     const data = await res.json();
-    if (data._id !== undefined) {
+    if (data.token !== undefined) {
       userContext.setUserContext(data);
       navigate("/");
     } else {

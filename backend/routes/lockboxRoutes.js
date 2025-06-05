@@ -20,5 +20,6 @@ const { authenticateJWT } = require("../middleware/auth");
  *         description: OK
  */
 router.get("/", authenticateJWT, lockboxController.default); //An example how to use protected route.
+router.get("/all", lockboxController.getAllLockboxes);
 
 module.exports = router;

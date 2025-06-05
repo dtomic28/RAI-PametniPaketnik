@@ -21,6 +21,8 @@ var userController = require("../controllers/userController.js");
  */
 router.get("/", userController.default);
 
+router.get("/all", userController.getAllUsers);
+
 /**
  * @swagger
  * /user/register:
@@ -68,5 +70,9 @@ router.get("/logout", userController.logout);
  *         description: Got all usernames successfully
  */
 router.get("/usernameExists/:username", userController.usernameExists);
+
+router.put("/:id", userController.updateUser);
+
+router.delete("/:id", userController.deleteUser);
 
 module.exports = router;

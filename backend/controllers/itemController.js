@@ -1,6 +1,8 @@
 const ItemModel = require("../models/itemModel.js");
 const jwt = require("jsonwebtoken");
 const { isUsernameAllowedByOrv } = require("../utils/orvValidator");
+const fs = require("fs");
+const path = require("path");
 
 // GET /user
 function defaultHandler(req, res) {
@@ -24,7 +26,61 @@ function getSellingItems(req, res) {
         .catch(err => res.status(500).json({ error: err.message }));
 }
 
+async function createItem(req, res) {
+  try {
+    const { name, description, price, weight, isSelling } = req.body;
+    const item = new ItemModel({
+      name,
+      description,
+      price,
+      weight,
+      isSelling: isSelling === "true" || isSelling === true,
+      imageLink: req.file ? req.file.path.replace(/\\/g, "/") : "images/default.jpg",
+    });
+    await item.save();
+    res.status(201).json(item);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
+async function updateItem(req, res) {
+  try {
+    const { name, description, price, weight, isSelling } = req.body;
+    const updateData = {
+      name,
+      description,
+      price,
+      weight,
+      isSelling: isSelling === "true" || isSelling === true,
+    };
+    if (req.file) {
+      updateData.imageLink = req.file.path.replace(/\\/g, "/");
+    }
+    const item = await ItemModel.findByIdAndUpdate(req.params.id, updateData, { new: true });
+    res.json(item);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
+async function deleteItem(req, res) {
+  try {
+    const item = await ItemModel.findByIdAndDelete(req.params.id);
+    if (item && item.imageLink && item.imageLink !== "images/default.jpg") {
+      fs.unlink(path.join(__dirname, "..", item.imageLink), () => {});
+    }
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
+
 module.exports = {
   default: defaultHandler,
-  getSellingItems: getSellingItems
+  getSellingItems: getSellingItems,
+  createItem,
+  updateItem,
+  deleteItem,
 };
