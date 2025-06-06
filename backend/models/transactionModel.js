@@ -2,7 +2,10 @@ var mongoose = require('mongoose');
 var Schema   = mongoose.Schema;
 
 var transactionSchema = new Schema({
-    'lockboxID' : String,
+    'lockboxID' : {
+        type: Schema.Types.ObjectId,
+        ref: 'lockbox'
+    },
     'sellerID' : {
         type: Schema.Types.ObjectId,
         ref: 'user'

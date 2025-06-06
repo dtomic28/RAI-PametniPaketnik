@@ -75,6 +75,22 @@ async function getTransactionByID(req, res) {
   }
 }
 
+async function getTransactionByItemID(req, res) {
+  try {
+    const transactions = await TransactionModel.find({
+      itemID: req.params.id,
+    })
+      .populate("lockboxID")
+      .populate("sellerID")
+      .populate("buyerID")
+      .populate("itemID")
+      .exec();
+    res.json(transactions);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
 module.exports = {
   default: defaultHandler,
   getAllCompletedTransactions,

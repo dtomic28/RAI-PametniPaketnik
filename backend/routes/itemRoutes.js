@@ -33,5 +33,31 @@ router.get("/", itemController.default);
  */
 router.get("/getSellingItems", itemController.getSellingItems);
 
+/**
+ * @swagger
+ * /item/getItemByID/:itemID:
+ *   get:
+ *     summary: Gets the item associated with the specified ID, returns false if doesn't exist
+ *     tags: [item]
+ *     responses:
+ *       200:
+ *         description: OK
+ *       404:
+ *         description: Item doesn't exist
+ */
+router.get("/getItemByID/:itemID", itemController.getItemByID)
 
+/**
+ * @swagger
+ * /item/buyItem/:itemID:
+ *   get:
+ *     summary: Sells item with itemID to user with userID
+ *     tags: [item]
+ *     responses:
+ *       200:
+ *         description: OK
+ *       401:
+ *         description: Failed
+ */
+router.post("/buyItem/:itemID", itemController.buyItem)
 module.exports = router;
