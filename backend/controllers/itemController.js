@@ -127,7 +127,13 @@ async function buyItem(req, res) {
       return res.status(404).json({ error: 'Lockbox not found for this item' });
     }
 
-    const transaction = await TransactionModel.findOne({ itemID: itemID, buyerID: { $exists: false } });
+    const transaction = await TransactionModel.findOne({
+      itemID: itemID,
+      $or: [
+        { buyerID: { $exists: false } },
+        { buyerID: null }
+      ]
+    });
     if (!transaction) {
       return res.status(404).json({ error: 'Transaction not found for this item' });
     }
@@ -246,5 +252,5 @@ module.exports = {
   deleteItem,
   getItemByID: getItemByID,
   buyItem: buyItem,
-
+  sellItem: sellItem 
 };
