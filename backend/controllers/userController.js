@@ -32,7 +32,7 @@ async function login(req, res, next) {
       req.body.password
     );
     if (!user) {
-      return res.status(401).json({ error: "Wrong username or password" });
+      return res.status(401).json({ error: `Wrong username or password. ${user}` });
     }
 
     let allowed = false;
@@ -59,8 +59,7 @@ async function login(req, res, next) {
 
     res.json({ token });
   } catch (err) {
-    console.log(err);
-    next(err);
+    return res.status(401).json({error: err})
   }
 }
 

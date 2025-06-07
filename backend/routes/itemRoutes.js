@@ -74,4 +74,18 @@ router.post("/buyItem", itemController.buyItem)
  *         description: Failed
  */
 router.post("/sellItem", itemController.sellItem)
+
+/**
+ * @swagger
+ * /item/storeImage:
+ *   get:
+ *     summary: Gets image that it stores in /images
+ *     tags: [item]
+ *     responses:
+ *       200:
+ *         description: OK
+ *       401:
+ *         description: Failed
+ */
+router.post("/storeImage", itemController.storeImage)
 module.exports = router;
