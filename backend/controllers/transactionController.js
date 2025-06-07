@@ -83,6 +83,7 @@ async function getTransactionByID(req, res) {
   }
 }
 
+<<<<<<< HEAD
 //UPDATE /transaction/:id
 
 async function updateTransaction(req, res) {
@@ -227,6 +228,20 @@ async function createTransaction(req, res) {
     res.status(201).json(transaction);
   } catch (err) {
     console.error("Error creating transaction:", err);
+=======
+async function getTransactionByItemID(req, res) {
+  try {
+    const transactions = await TransactionModel.find({
+      itemID: req.params.id,
+    })
+      .populate("lockboxID")
+      .populate("sellerID")
+      .populate("buyerID")
+      .populate("itemID")
+      .exec();
+    res.json(transactions);
+  } catch (err) {
+>>>>>>> f33eacf87c2462189a88cf1ca8efd0096522b89a
     res.status(500).json({ error: err.message });
   }
 }

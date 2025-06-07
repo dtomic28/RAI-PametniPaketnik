@@ -49,5 +49,31 @@ router.post("/", upload.single("image"), itemController.createItem);
 router.put("/:id", upload.single("image"), itemController.updateItem);
 router.delete("/:id", itemController.deleteItem);
 
+/**
+ * @swagger
+ * /item/getItemByID/:itemID:
+ *   get:
+ *     summary: Gets the item associated with the specified ID, returns false if doesn't exist
+ *     tags: [item]
+ *     responses:
+ *       200:
+ *         description: OK
+ *       404:
+ *         description: Item doesn't exist
+ */
+router.get("/getItemByID/:itemID", itemController.getItemByID)
 
+/**
+ * @swagger
+ * /item/buyItem/:itemID:
+ *   get:
+ *     summary: Sells item with itemID to user with userID
+ *     tags: [item]
+ *     responses:
+ *       200:
+ *         description: OK
+ *       401:
+ *         description: Failed
+ */
+router.post("/buyItem/:itemID", itemController.buyItem)
 module.exports = router;
