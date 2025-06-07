@@ -75,5 +75,19 @@ router.get("/getItemByID/:itemID", itemController.getItemByID)
  *       401:
  *         description: Failed
  */
-router.post("/buyItem/:itemID", itemController.buyItem)
+router.post("/buyItem", itemController.buyItem)
+
+/**
+ * @swagger
+ * /item/buyItem/:itemID:
+ *   get:
+ *     summary: Starts transaction for item
+ *     tags: [item]
+ *     responses:
+ *       200:
+ *         description: OK
+ *       401:
+ *         description: Failed
+ */
+router.post("/sellItem", itemController.sellItem)
 module.exports = router;
