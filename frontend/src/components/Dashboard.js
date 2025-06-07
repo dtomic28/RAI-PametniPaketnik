@@ -13,6 +13,9 @@ import DashboardTransactions from "./DashboardTransactions";
 import DashboardLockboxes from "./DashboardLockboxes";
 import DashboardItems from "./DashboardItems";
 import DashboardUnwantedTransactions from "./DashboardUnwantedTransactions";
+import Logout from "./Logout";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { useNavigate } from "react-router-dom";
 
 function TabPanel({ children, value, index }) {
     return (
@@ -44,6 +47,8 @@ export default function Dashboard() {
     const [openEditItem, setOpenEditItem] = useState(false);
     const [editItem, setEditItem] = useState(null);
     const [itemForm, setItemForm] = useState({ name: "", description: "", price: "", weight: "", isSelling: true, image: null });
+
+    const navigate = useNavigate();
 
     const [unwantedTransactions, setUnwantedTransactions] = useState([]);
 
@@ -271,7 +276,9 @@ export default function Dashboard() {
             label: "Unwanted Transactions",
             value: unwantedTransactions.length,
             icon: <LockIcon color="error" fontSize="large" />,
-        }
+        },
+        
+        
 
     ];
 
@@ -280,9 +287,26 @@ export default function Dashboard() {
             <Container maxWidth="lg">
                 <AppBar position="static" color="primary" sx={{ borderRadius: 2, mb: 3 }}>
                     <Toolbar>
-                        <Typography variant="h6" sx={{ flexGrow: 1 }}>
-                            Admin Dashboard
-                        </Typography>
+                         <Box
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                mb: 1,
+                                flex: 1,
+                            }}
+                            >
+                            <Typography variant="h6">
+                                Dashboard
+                            </Typography>
+                            <Button
+                                variant="contained"
+                                startIcon={<LogoutIcon />} 
+                                onClick={() => navigate("/logout")}
+                            >
+                                Logout
+                            </Button>
+                            </Box>
                     </Toolbar>
                     <Tabs
                         value={tab}
@@ -296,6 +320,7 @@ export default function Dashboard() {
                         <Tab icon={<LockIcon />} label="Lockboxes" />
                         <Tab icon={<InventoryIcon />} label="Items" />
                         <Tab icon={<LockIcon color="error" />} label="Unwanted Transactions" onClick={fetchUnwantedTransactions} />
+                        
                     </Tabs>
                 </AppBar>
 
@@ -374,6 +399,7 @@ export default function Dashboard() {
                     <TabPanel value={tab} index={4}>
                         <DashboardUnwantedTransactions unwantedTransactions={unwantedTransactions} />
                     </TabPanel>
+                    
                 </Paper>
             </Container>
         </Box>
