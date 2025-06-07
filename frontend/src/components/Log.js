@@ -46,7 +46,7 @@ function Log() {
 
   useEffect(() => {
     fetchTransactions(
-      `${window.REACT_APP_API_URL}/transaction/getCompleted`,
+      `${window.REACT_APP_API_URL}/api/transaction/getCompleted`,
       "Completed Transactions"
     );
   }, []);
@@ -64,7 +64,7 @@ function Log() {
             color="inherit"
             onClick={() =>
               fetchTransactions(
-                `${window.REACT_APP_API_URL}/transaction/getUnwanted`,
+                `${window.REACT_APP_API_URL}/api/transaction/getUnwanted`,
                 "Unwanted Transactions"
               )
             }
@@ -75,7 +75,7 @@ function Log() {
             color="inherit"
             onClick={() =>
               fetchTransactions(
-                `${window.REACT_APP_API_URL}/transaction/getCompleted`,
+                `${window.REACT_APP_API_URL}/api/transaction/getCompleted`,
                 "Completed Transactions"
               )
             }
@@ -86,7 +86,7 @@ function Log() {
             color="inherit"
             onClick={() =>
               fetchTransactions(
-                `${window.REACT_APP_API_URL}/transaction/getOpen`,
+                `${window.REACT_APP_API_URL}/api/transaction/getOpen`,
                 "Open Transactions"
               )
             }
@@ -100,7 +100,7 @@ function Log() {
                 color="inherit"
                 onClick={() =>
                   fetchTransactions(
-                    `${window.REACT_APP_API_URL}/transaction/getByBoxID/${id}`,
+                    `${window.REACT_APP_API_URL}/api/transaction/getByBoxID/${id}`,
                     `Box ${id}`
                   )
                 }
@@ -146,7 +146,7 @@ function Log() {
               {transactions.map((row, index) => (
                 <TableRow key={index}>
                   <TableCell>{row._id}</TableCell>
-                  <TableCell>{row.lockboxID}</TableCell>
+                  <TableCell>{row.lockboxID.BoxID}</TableCell>
                   <TableCell>{row.sellerID?.username || "-"}</TableCell>
                   <TableCell>{row.buyerID?.username || "-"}</TableCell>
                   <TableCell>{row.itemID?.name || "-"}</TableCell>

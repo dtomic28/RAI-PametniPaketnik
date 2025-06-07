@@ -7,6 +7,12 @@ import LockIcon from "@mui/icons-material/Lock";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
+import DashboardQuickStats from "./DashboardQuickStats";
+import DashboardUsers from "./DashboardUsers";
+import DashboardTransactions from "./DashboardTransactions";
+import DashboardLockboxes from "./DashboardLockboxes";
+import DashboardItems from "./DashboardItems";
+import DashboardUnwantedTransactions from "./DashboardUnwantedTransactions";
 
 function TabPanel({ children, value, index }) {
     return (
@@ -32,7 +38,7 @@ export default function Dashboard() {
     const [openAddTransaction, setOpenAddTransaction] = useState(false);
     const [openEditTransaction, setOpenEditTransaction] = useState(false);
     const [editTransaction, setEditTransaction] = useState(null);
-    const [transactionForm, setTransactionForm] = useState({ lockboxID: "", sellerID: "", buyerID: "", itemID: "", startedSellingTime: "", finishedSellingTime: "" });
+    const [transactionForm, setTransactionForm] = useState({ lockboxID: "", sellerID: null, buyerID: null, itemID: null, startedSellingTime: "", finishedSellingTime: null });
 
     const [openAddItem, setOpenAddItem] = useState(false);
     const [openEditItem, setOpenEditItem] = useState(false);
@@ -109,7 +115,7 @@ export default function Dashboard() {
     }
 
     function fetchTransactions() {
-        fetch(`${window.REACT_APP_API_URL}/api/transaction/getCompleted`)
+        fetch(`${window.REACT_APP_API_URL}/api/transaction/getOpen`)
             .then((res) => res.json())
             .then(setTransactions)
             .catch(() => setError("Failed to fetch transactions"));
@@ -146,6 +152,7 @@ export default function Dashboard() {
         fetchTransactions();
         fetchLockboxes();
         fetchItems();
+        fetchUsers();
     }
 
     async function handleUpdateTransaction() {
@@ -159,6 +166,7 @@ export default function Dashboard() {
         fetchLockboxes();
         fetchItems();
         fetchUnwantedTransactions();
+        fetchUsers();
     }
 
     async function handleAddItem() {
@@ -291,46 +299,7 @@ export default function Dashboard() {
                     </Tabs>
                 </AppBar>
 
-                {/* Quick stats cards */}
-                <Grid
-                    container
-                    spacing={3}
-                    sx={{ mb: 3 }}
-                    justifyContent="center"
-                    alignItems="stretch"
-                >
-                    {stats.map((stat) => (
-                        <Grid
-                            item
-                            xs={12}
-                            sm={6}
-                            md={3}
-                            key={stat.label}
-                            sx={{ display: "flex", justifyContent: "center" }}
-                        >
-                            <Card
-                                sx={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    p: 3,
-                                    minWidth: 200,
-                                    minHeight: 140,
-                                    boxShadow: 3,
-                                }}
-                            >
-                                <Box sx={{ mb: 1 }}>{stat.icon}</Box>
-                                <Typography variant="h5" align="center">
-                                    {stat.value}
-                                </Typography>
-                                <Typography color="text.secondary" align="center">
-                                    {stat.label}
-                                </Typography>
-                            </Card>
-                        </Grid>
-                    ))}
-                </Grid>
+                <DashboardQuickStats stats={stats} />
 
                 {error && (
                     <Alert severity="error" sx={{ mb: 2 }}>
@@ -341,429 +310,69 @@ export default function Dashboard() {
                 <Paper elevation={3} sx={{ borderRadius: 2 }}>
                     <TabPanel value={tab} index={0}>
 
-                        {/* User dialog box*/}
-                        <Dialog open={openAddUser || openEditUser} onClose={() => { setOpenAddUser(false); setOpenEditUser(false); }}>
-                            <DialogTitle>{openAddUser ? "Add User" : "Edit User"}</DialogTitle>
-                            <DialogContent>
-                                <TextField
-                                    label="Username"
-                                    value={userForm.username}
-                                    onChange={e => setUserForm({ ...userForm, username: e.target.value })}
-                                    fullWidth
-                                    margin="normal"
-                                />
-                                <TextField
-                                    label="Email"
-                                    type="email"
-                                    value={userForm.email}
-                                    onChange={e => setUserForm({ ...userForm, email: e.target.value })}
-                                    fullWidth
-                                    margin="normal"
-                                />
-                                <TextField
-                                    label="Password"
-                                    type="password"
-                                    value={userForm.password}
-                                    onChange={e => setUserForm({ ...userForm, password: e.target.value })}
-                                    fullWidth
-                                    margin="normal"
-                                />
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={() => { setOpenAddUser(false); setOpenEditUser(false); }}>Cancel</Button>
-                                <Button
-                                    onClick={openAddUser ? handleAddUser : handleUpdateUser}
-                                    variant="contained"
-                                >
-                                    {openAddUser ? "Add" : "Update"}
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
-
-                        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
-                            <Typography variant="h6" gutterBottom>
-                                Users
-                            </Typography>
-                            <Button
-                                variant="contained"
-                                startIcon={<AddIcon />}
-                                onClick={() => {
-                                    setUserForm({ username: "", email: "", password: "" });
-                                    setOpenAddUser(true)
-                                }
-                                } >
-                                Add User
-                            </Button>
-                        </Box>
-
-                        <TableContainer>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Username</TableCell>
-                                        <TableCell>Email</TableCell>
-                                        <TableCell>Transactions</TableCell>
-                                        <TableCell>Actions</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {users.map((u, i) => (
-                                        <TableRow key={i} >
-                                            <TableCell>{u.username}</TableCell>
-                                            <TableCell>{u.email}</TableCell>
-                                            <TableCell>{u.numberOfTransactions}</TableCell>
-                                            <TableCell>
-                                                <IconButton onClick={() => handleEditUser(u)} >
-                                                    <EditIcon />
-                                                </IconButton>
-                                                <IconButton color="error" onClick={() => handleDeleteUser(u._id)}>
-                                                    <DeleteIcon />
-                                                </IconButton>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                        <DashboardUsers
+                            users={users}
+                            userForm={userForm}
+                            openAddUser={openAddUser}
+                            openEditUser={openEditUser}
+                            setOpenAddUser={setOpenAddUser}
+                            setOpenEditUser={setOpenEditUser}
+                            setUserForm={setUserForm}
+                            handleAddUser={handleAddUser}
+                            handleUpdateUser={handleUpdateUser}
+                            handleEditUser={handleEditUser}
+                            handleDeleteUser={handleDeleteUser}
+                        />                      
                     </TabPanel>
                     <TabPanel value={tab} index={1}>
 
-                        {/* Transaction dialog box */}
-
-                        <Dialog open={openAddTransaction || openEditTransaction} onClose={() => { setOpenAddTransaction(false); setOpenEditTransaction(false); }}>
-                            <DialogTitle>{openAddTransaction ? "Add Transaction" : "Edit Transaction"}</DialogTitle>
-                            <DialogContent>
-                                <FormControl fullWidth sx={{ my: 1 }} variant="outlined">
-                                    <InputLabel id="lockbox-label">Lockbox</InputLabel>
-                                    <Select
-                                        labelId="lockbox-label"
-                                        id="lockbox"
-                                        value={transactionForm.lockboxID}
-                                        label="Lockbox"
-                                        onChange={e => setTransactionForm({ ...transactionForm, lockboxID: e.target.value })}
-                                    >
-                                        <MenuItem value=""><em>Select Lockbox</em></MenuItem>
-                                        {lockboxes.map(box => (
-                                            <MenuItem key={box._id} value={box._id}>{box.boxID}</MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
-                                <FormControl fullWidth sx={{ my: 1 }} variant="outlined">
-                                    <InputLabel id="seller-label" shrink>Seller</InputLabel>
-                                    <Select
-                                        labelId="seller-label"
-                                        value={transactionForm.sellerID}
-                                        label="Seller"
-                                        onChange={e => setTransactionForm({ ...transactionForm, sellerID: e.target.value })}
-                                        displayEmpty
-                                    >
-                                        <MenuItem value=""><em>Select Seller</em></MenuItem>
-                                        {users.map(user => (
-                                            <MenuItem key={user._id} value={user._id}>{user.username}</MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
-
-                                <FormControl fullWidth sx={{ my: 1 }}>
-                                    <InputLabel id="buyer-label" shrink>Buyer</InputLabel>
-                                    <Select
-                                        labelId="buyer-label"
-                                        value={transactionForm.buyerID}
-                                        label="Buyer"
-                                        onChange={e => setTransactionForm({ ...transactionForm, buyerID: e.target.value })}
-                                        displayEmpty
-                                    >
-                                        <MenuItem value=""><em>Select Buyer</em></MenuItem>
-                                        {users.map(user => (
-                                            <MenuItem key={user._id} value={user._id}>{user.username}</MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
-
-                                <FormControl fullWidth sx={{ my: 1 }}>
-                                    <InputLabel id="item-label" shrink>Item</InputLabel>
-                                    <Select
-                                        labelId="item-label"
-                                        value={transactionForm.itemID}
-                                        label="Item"
-                                        onChange={e => setTransactionForm({ ...transactionForm, itemID: e.target.value })}
-                                        displayEmpty
-                                    >
-                                        <MenuItem value=""><em>Select Item</em></MenuItem>
-                                        {items.map(item => (
-                                            <MenuItem key={item._id} value={item._id}>{item.name}</MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
-
-                                <TextField
-                                    label="Started Selling Time"
-                                    type="datetime-local"
-                                    value={transactionForm.startedSellingTime}
-                                    onChange={e => setTransactionForm({ ...transactionForm, startedSellingTime: e.target.value })}
-                                    fullWidth
-                                    margin="normal"
-                                    InputLabelProps={{ shrink: true }}
-                                />
-                                <TextField
-                                    label="Finished Selling Time"
-                                    type="datetime-local"
-                                    value={transactionForm.finishedSellingTime}
-                                    onChange={e => setTransactionForm({ ...transactionForm, finishedSellingTime: e.target.value })}
-                                    fullWidth
-                                    margin="normal"
-                                    InputLabelProps={{ shrink: true }}
-                                />
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={() => { setOpenAddTransaction(false); setOpenEditTransaction(false); }}>Cancel</Button>
-                                <Button
-                                    onClick={openAddTransaction ? handleAddTransaction : handleUpdateTransaction}
-                                    variant="contained"
-                                >
-                                    {openAddTransaction ? "Add" : "Update"}
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
-
-                        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
-                            <Typography variant="h6" gutterBottom>
-                                Transactions
-                            </Typography>
-                            <Button
-                                variant="contained"
-                                startIcon={<AddIcon />}
-                                onClick={handleOpenAddTransaction}
-                            >
-                                Add Transaction
-                            </Button>
-                        </Box>
-                        <TableContainer>
-                            <Table size="small">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>ID</TableCell>
-                                        <TableCell>Lockbox</TableCell>
-                                        <TableCell>Seller</TableCell>
-                                        <TableCell>Buyer</TableCell>
-                                        <TableCell>Item</TableCell>
-                                        <TableCell>Started</TableCell>
-                                        <TableCell>Finished</TableCell>
-                                        <TableCell>Actions</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {transactions.map((tr, i) => (
-                                        <TableRow key={tr._id || i} >
-                                            <TableCell>{tr._id}</TableCell>
-                                            <TableCell>{tr.lockboxID?.boxID}</TableCell>
-                                            <TableCell>{tr.sellerID?.username || "-"}</TableCell>
-                                            <TableCell>{tr.buyerID?.username || "-"}</TableCell>
-                                            <TableCell>{tr.itemID?.name || "-"}</TableCell>
-                                            <TableCell>
-                                                {tr.startedSellingTime
-                                                    ? new Date(tr.startedSellingTime).toLocaleString()
-                                                    : "-"}
-                                            </TableCell>
-                                            <TableCell>
-                                                {tr.finishedSellingTime
-                                                    ? new Date(tr.finishedSellingTime).toLocaleString()
-                                                    : "-"}
-                                            </TableCell>
-                                            <TableCell>
-                                                <IconButton onClick={() => handleEditTransaction(tr)}>
-                                                    <EditIcon />
-                                                </IconButton>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                        <DashboardTransactions
+                            openAddTransaction={openAddTransaction}
+                            openEditTransaction={openEditTransaction}
+                            setOpenAddTransaction={setOpenAddTransaction}
+                            setOpenEditTransaction={setOpenEditTransaction}
+                            transactionForm={transactionForm}
+                            setTransactionForm={setTransactionForm}
+                            handleAddTransaction={handleAddTransaction}
+                            handleUpdateTransaction={handleUpdateTransaction}
+                            handleEditTransaction={handleEditTransaction}
+                            handleOpenAddTransaction={handleOpenAddTransaction}
+                            transactions={transactions}
+                            lockboxes={lockboxes}
+                            users={users}
+                            items={items}
+                        />               
+                       
                     </TabPanel>
 
 
 
                     <TabPanel value={tab} index={2}>
-                        <Typography variant="h6" gutterBottom>
-                            Lockboxes
-                        </Typography>
-                        <TableContainer>
-                            <Table size="small">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Box ID</TableCell>
-                                        <TableCell>Last Opened By</TableCell>
-                                        <TableCell>Last Opened Time</TableCell>
-                                        <TableCell>Stored Item</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {lockboxes.map((box, i) => (
-                                        <TableRow key={box.boxID || i}>
-                                            <TableCell>{box.boxID || "-"}</TableCell>
-                                            <TableCell>{box.lastOpenedPerson?.username || "-"}</TableCell>
-                                            <TableCell>{box.lastOpenedTime ? new Date(box.lastOpenedTime).toLocaleString() : "-"}</TableCell>
-                                            <TableCell>{box.storedItem?.name || "-"}</TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                        <DashboardLockboxes lockboxes={lockboxes} />
                     </TabPanel>
 
 
                     <TabPanel value={tab} index={3}>
 
-                        <Dialog open={openAddItem || openEditItem} onClose={() => { setOpenAddItem(false); setOpenEditItem(false); }}>
-                            <DialogTitle>{openAddItem ? "Add Item" : "Edit Item"}</DialogTitle>
-                            <DialogContent>
-                                <TextField
-                                    label="Name"
-                                    value={itemForm.name}
-                                    onChange={e => setItemForm({ ...itemForm, name: e.target.value })}
-                                    fullWidth
-                                    margin="normal"
-                                />
-                                <TextField
-                                    label="Description"
-                                    value={itemForm.description}
-                                    onChange={e => setItemForm({ ...itemForm, description: e.target.value })}
-                                    fullWidth
-                                    margin="normal"
-                                />
-                                <TextField
-                                    label="Price"
-                                    type="number"
-                                    value={itemForm.price}
-                                    onChange={e => setItemForm({ ...itemForm, price: e.target.value })}
-                                    fullWidth
-                                    margin="normal"
-                                />
-                                <TextField
-                                    label="Weight"
-                                    type="number"
-                                    value={itemForm.weight}
-                                    onChange={e => setItemForm({ ...itemForm, weight: e.target.value })}
-                                    fullWidth
-                                    margin="normal"
-                                />
-                                <FormControl fullWidth margin="normal">
-                                    <InputLabel id="isSelling-label">Is Selling</InputLabel>
-                                    <Select
-                                        labelId="isSelling-label"
-                                        value={itemForm.isSelling}
-                                        label="Is Selling"
-                                        onChange={e => setItemForm({ ...itemForm, isSelling: e.target.value === "true" })}
-                                    >
-                                        <MenuItem value="true">Yes</MenuItem>
-                                        <MenuItem value="false">No</MenuItem>
-                                    </Select>
-                                </FormControl>
-                                <Button
-                                    variant="contained"
-                                    component="label"
-                                    sx={{ mt: 2 }}
-                                >
-                                    {itemForm.image ? "Change Image" : "Upload Image"}
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        hidden
-                                        onChange={e => setItemForm({ ...itemForm, image: e.target.files[0] })}
-                                    />
-                                </Button>
-                                {openEditItem && editItem?.imageLink && (
-                                    <Box mt={2}>
-                                        <Typography variant="caption">Current image:</Typography>
-                                        <img src={`${window.REACT_APP_API_URL}/${editItem.imageLink}`} alt="item" style={{ maxWidth: 100, display: "block" }} />
-                                    </Box>
-                                )}
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={() => { setOpenAddItem(false); setOpenEditItem(false); }}>Cancel</Button>
-                                <Button
-                                    onClick={openAddItem ? handleAddItem : handleUpdateItem}
-                                    variant="contained"
-                                >
-                                    {openAddItem ? "Add" : "Update"}
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
+                        <DashboardItems
+                            openAddItem={openAddItem}
+                            openEditItem={openEditItem}
+                            setOpenAddItem={setOpenAddItem}
+                            setOpenEditItem={setOpenEditItem}
+                            editItem={editItem}
+                            itemForm={itemForm}
+                            setItemForm={setItemForm}
+                            handleAddItem={handleAddItem}
+                            handleUpdateItem={handleUpdateItem}
+                            handleEditItem={handleEditItem}
+                            handleDeleteItem={handleDeleteItem}
+                            handleOpenAddItem={handleOpenAddItem}
+                            items={items}
+                        />
 
-
-                        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
-                            <Typography variant="h6" gutterBottom>
-                                Items
-                            </Typography>
-                            <Button
-                                variant="contained"
-                                startIcon={<AddIcon />}
-                                onClick={handleOpenAddItem}
-                            >
-                                Add Item
-                            </Button>
-                        </Box>
-                        <TableContainer>
-                            <Table size="small">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Description</TableCell>
-                                        <TableCell>Price</TableCell>
-                                        <TableCell>Weight</TableCell>
-                                        <TableCell>Is Selling</TableCell>
-                                        <TableCell>Actions</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {items.map((item, i) => (
-                                        <TableRow key={item._id || i} >
-                                            <TableCell>{item.name}</TableCell>
-                                            <TableCell>{item.description}</TableCell>
-                                            <TableCell>{item.price}</TableCell>
-                                            <TableCell>{item.weight || "-"}</TableCell>
-                                            <TableCell>{item.isSelling ? "Yes" : "No"}</TableCell>
-                                            <TableCell>
-                                                <IconButton onClick={() => handleEditItem(item)}>
-                                                    <EditIcon />
-                                                </IconButton>
-                                                <IconButton color="error" onClick={() => handleDeleteItem(item._id)}>
-                                                    <DeleteIcon />
-                                                </IconButton>
-                                            </TableCell>
-
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
                     </TabPanel>
                     <TabPanel value={tab} index={4}>
-                        <Typography variant="h6" gutterBottom>
-                            Unwanted Transactions
-                        </Typography>
-                        <TableContainer>
-                            <Table size="small">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>ID</TableCell>
-                                        <TableCell>Lockbox</TableCell>
-                                        <TableCell>Last activity</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {unwantedTransactions.map((tr, i) => (
-                                        <TableRow key={tr._id || i} >
-                                            <TableCell>{tr._id}</TableCell>
-                                            <TableCell>{tr.lockboxID?.boxID}</TableCell>
-                                            <TableCell>{tr.startedSellingTime ? new Date(tr.startedSellingTime).toLocaleString() : "-"}</TableCell>
-
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                        <DashboardUnwantedTransactions unwantedTransactions={unwantedTransactions} />
                     </TabPanel>
                 </Paper>
             </Container>

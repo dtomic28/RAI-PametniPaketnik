@@ -65,8 +65,12 @@ async function getUnwantedTransactions(req, res) {
 // GET /transaction/byLockbox/:id
 async function getTransactionByID(req, res) {
   try {
+    const box = await LockboxModel.find({
+      boxID:req.params.id,
+  });
+
     const transactions = await TransactionModel.find({
-      lockboxID: req.params.id,
+      lockboxID: box[0]._id,
     })
       .populate("lockboxID")
       .populate("sellerID")
@@ -86,6 +90,14 @@ async function updateTransaction(req, res) {
     const transactionId = req.params.id;
     const updateData = req.body;
 
+    Object.keys(updateData).forEach(key => {
+      if (updateData[key] === "") {
+        updateData[key] = null;
+      }
+    });
+
+    const transaction = await TransactionModel.findById(transactionId);
+
     const updatedTransaction = await TransactionModel.findByIdAndUpdate(
       transactionId,
       updateData,
@@ -93,8 +105,37 @@ async function updateTransaction(req, res) {
     );
 
     if (!updatedTransaction) {
+  return res.status(404).json({ error: "Transaction not found" });
+}
+    if(transaction.sellerID.toString() !== updatedTransaction.sellerID.toString()) {
+      await UserModel.findByIdAndUpdate(
+        updatedTransaction.sellerID,
+        { $inc: { numberOfTransactions: 1 } } 
+      );
+
+      await UserModel.findByIdAndUpdate(
+        transaction.sellerID,
+        { $inc: { numberOfTransactions: -1 } } 
+      );
+    }
+
+    if(transaction.buyerID.toString() !== updatedTransaction.buyerID.toString()) {
+      await UserModel.findByIdAndUpdate(
+        updatedTransaction.buyerID,
+        { $inc: { numberOfTransactions: 1 } } 
+      );
+
+      await UserModel.findByIdAndUpdate(
+        transaction.buyerID,
+        { $inc: { numberOfTransactions: -1 } } 
+      );
+    }
+
+    if (!updatedTransaction) {
       return res.status(404).json({ error: "Transaction not found" });
     }
+
+   
 
     if (updatedTransaction.finishedSellingTime== null) {
       await LockboxModel.findByIdAndUpdate(
@@ -123,6 +164,7 @@ async function updateTransaction(req, res) {
 
     res.json(updatedTransaction);
   } catch (err) {
+    console.error("Error updating transaction:", err);
     res.status(500).json({ error: err.message });
   }
 
@@ -133,21 +175,35 @@ async function updateTransaction(req, res) {
 async function createTransaction(req, res) {
   try {
     const newTransaction = new TransactionModel({
-      lockboxID: req.body.lockboxID,
-      sellerID: req.body.sellerID,
-      buyerID: req.body.buyerID,
-      itemID: req.body.itemID,
+      lockboxID: req.body.lockboxID || null,
+      sellerID: req.body.sellerID   || null,
+      buyerID: req.body.buyerID || null,
+      itemID: req.body.itemID || null,
       startedSellingTime: req.body.startedSellingTime || new Date(),
       finishedSellingTime: req.body.finishedSellingTime || null,
     });
 
     const transaction = await newTransaction.save();
 
+    if(newTransaction.sellerID !== null) {
+      await UserModel.findByIdAndUpdate(
+        transaction.sellerID,
+        { $inc: { numberOfTransactions: 1 } } 
+      );
+    }
+
+    if (newTransaction.buyerID !== null) {
+      await UserModel.findByIdAndUpdate(
+        transaction.buyerID,
+        { $inc: { numberOfTransactions: 1 } } 
+      );
+    }
+
     if (transaction.finishedSellingTime == null) {
       await LockboxModel.findByIdAndUpdate(
         transaction.lockboxID,
         {
-          lastOpenedTime: startedSellingTime ,
+          lastOpenedTime: transaction.startedSellingTime ,
           lastOpenedPerson: transaction.sellerID,
           storedItem: transaction.itemID,
         }
@@ -170,6 +226,7 @@ async function createTransaction(req, res) {
 
     res.status(201).json(transaction);
   } catch (err) {
+    console.error("Error creating transaction:", err);
     res.status(500).json({ error: err.message });
   }
 }
