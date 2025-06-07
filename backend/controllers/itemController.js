@@ -93,6 +93,8 @@ async function buyItem(req, res) {
     await item.save();
 
     lockbox.storedItem = null;
+    lockbox.lastOpenedTime = new Date();
+    lockbox.lastOpenedPerson = buyer._id;
     await lockbox.save();
 
     buyer.numberOfTransactions = (buyer.numberOfTransactions || 0) + 1;
@@ -143,6 +145,12 @@ async function sellItem(req, res) {
     });
     const savedItem = await newItem.save();
 
+    const seller = await UserModel.findOne({ username: userID });
+    if (!seller) {
+      await ItemModel.findByIdAndDelete(savedItem._id);
+      return res.status(404).json({ error: 'Seller not found' });
+    }
+
     const lockbox = await LockboxModel.findOne({ boxID });
     if (!lockbox) {
       await ItemModel.findByIdAndDelete(savedItem._id);
@@ -153,17 +161,12 @@ async function sellItem(req, res) {
       return res.status(404).json({ error: 'Lockbox already contains an item' });
     }
     lockbox.storedItem = savedItem._id;
+    lockbox.lastOpenedTime = new Date();
+    lockbox.lastOpenedPerson = seller._id;
     await lockbox.save();
     if (!lockbox) {
       await ItemModel.findByIdAndDelete(savedItem._id);
       return res.status(404).json({ error: 'Lockbox not found' });
-    }
-
-    // Create transaction
-    const seller = await UserModel.findOne({ username: userID });
-    if (!seller) {
-      await ItemModel.findByIdAndDelete(savedItem._id);
-      return res.status(404).json({ error: 'Seller not found' });
     }
 
     const newTransaction = new TransactionModel({
