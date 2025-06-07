@@ -28,7 +28,7 @@ function Login() {
       setError("Invalid username or password");
       return;
     }
-    const res = await fetch(`${window.REACT_APP_API_URL}/api/user/login`, {
+    const res = await fetch(`${window.REACT_APP_API_URL}/api/user/loginAdmin`, {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -42,9 +42,13 @@ function Login() {
       userContext.setUserContext(data);
       navigate("/");
     } else {
+      
       setUsername("");
       setPassword("");
       setError("Invalid username or password");
+      if (res.status === 403) {
+        setError("User is not an admin or username is not authorized by ORV API");
+      }
     }
   }
 

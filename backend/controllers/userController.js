@@ -75,6 +75,51 @@ async function login(req, res, next) {
   }
 }
 
+
+async function loginAdmin(req, res, next) {
+  try {
+    const user = await UserModel.authenticate(
+      req.body.username,
+      req.body.password
+    );
+    if (!user) {
+      return res.status(401).json({ error: "Wrong username or password" });
+    }
+
+    if (!user.isAdmin) {
+      return res.status(403).json({ error: "User is not an admin" });
+    }
+
+    let allowed = false;
+    try {
+      allowed = await isUsernameAllowedByOrv(user.username);
+    } catch (err) {
+      console.log(err);
+      return res
+        .status(500)
+        .json({ error: "Login failed due to external check" });
+    }
+
+    if (!allowed) {
+      return res
+        .status(403)
+        .json({ error: "Username is not authorized by ORV API" });
+    }
+
+    const token = jwt.sign(
+      { id: user._id, username: user.username },
+      process.env.JWT_SECRET,
+      { expiresIn: "30d" }
+    );
+
+    res.json({ token });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+}
+
+
 // POST /user/logout
 function logout(req, res, next) {
   // JWT-based: nothing to destroy
@@ -149,6 +194,7 @@ module.exports = {
   default: defaultHandler,
   create,
   login,
+  loginAdmin,
   logout,
   usernameExists,
   getAllUsers,

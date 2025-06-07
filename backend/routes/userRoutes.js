@@ -47,6 +47,8 @@ router.post("/register", userController.create);
  */
 router.post("/login", userController.login);
 
+router.post("/loginAdmin", userController.loginAdmin);
+
 /**
  * @swagger
  * /user/logout:

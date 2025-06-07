@@ -7,6 +7,10 @@ const userSchema = new Schema({
   password: String,
   email: String,
   numberOfTransactions: Number,
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 // Pre-save hook to hash password
