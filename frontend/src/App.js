@@ -5,8 +5,10 @@ import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import Register from './components/Register';
 import Log from './components/Log';
 import Logout from './components/Logout';
+import Dashboard from './components/Dashboard';
 import { UserContext } from './UserContext';
 import { useState } from 'react';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const darkTheme = createTheme({
   palette: {
@@ -34,11 +36,21 @@ const [user, setUser] = useState(localStorage.user ? JSON.parse(localStorage.use
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <Routes>
-            <Route path="/" exact element={<Box sx={{ textAlign: 'center', mt: 4 }}>Welcome to the App</Box>} />
+            <Route path="/" exact element={
+              <ProtectedRoute>
+                <Dashboard/>
+              </ProtectedRoute>
+              
+              }/>
             <Route path="/login" exact element={<Login />}></Route>
             <Route path="/register" element={<Register />}></Route>
             <Route path="/logout" element={<Logout />}></Route>
-            <Route path="/log" element={<Log/>}></Route>
+            <Route path="/log" element={
+              <ProtectedRoute>
+                <Log/>
+              </ProtectedRoute>
+              
+            }/>
             
           </Routes>
     </ThemeProvider>

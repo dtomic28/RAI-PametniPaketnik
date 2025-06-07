@@ -34,6 +34,8 @@ userSchema.statics.getAllUsernames = async function () {
   return users.map((user) => user.username);
 };
 
+
+
 const User = mongoose.model("user", userSchema);
 module.exports = User;
 

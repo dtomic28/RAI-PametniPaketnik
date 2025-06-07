@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   backend:
+    backend:
     build: ./backend
     env_file:
       - .env.prod
@@ -13,6 +14,9 @@ services:
       - ORV_API_LINK=${ORV_API_LINK}
     expose:
       - "3001"
+    volumes:
+      - ./backend/images:/backend/images
+
 
   frontend:
     build: ./frontend

@@ -76,4 +76,8 @@ router.get("/getUnwanted", transactionController.getUnwantedTransactions);
  */
 router.get("/getByBoxID/:id", transactionController.getTransactionByID);
 
+router.post("/", transactionController.createTransaction);
+
+router.put("/:id", transactionController.updateTransaction);
+
 module.exports = router;

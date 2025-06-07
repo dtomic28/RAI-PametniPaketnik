@@ -7,6 +7,17 @@ function defaultHandler(req, res) {
   res.json({ message: "default function in userController" });
 }
 
+// GET /user/all
+async function getAllUsers(req, res) {
+  try {
+    const users = await UserModel.find({});
+    return res.json(users);
+  } catch (err) {
+    console.error("Error fetching users:", err);
+    throw err;
+  }
+}
+
 // POST /user/register
 async function create(req, res, next) {
   const user = new UserModel({
@@ -89,10 +100,58 @@ function usernameExists(req, res, next) {
     });
 }
 
+function deleteUser(req, res) {
+  const userId = req.params.id;
+  if (!userId) {
+    return res.status(400).json({ error: "User ID not provided" });
+  }
+
+  UserModel.findByIdAndDelete(userId)
+    .then((deletedUser) => {
+      if (!deletedUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      return res.status(200).json({ message: "User deleted successfully" });
+    })
+    .catch((err) => {
+      console.error("Error deleting user:", err);
+      return res.status(500).json({ error: "Database error" });
+    });
+
+}
+
+function updateUser(req, res) {
+  const userId = req.params.id;
+  if (!userId) {
+    return res.status(400).json({ error: "User ID not provided" });
+  }
+
+  const updateData = {
+    username: req.body.username,
+    email: req.body.email,
+    numberOfTransactions: req.body.numberOfTransactions,
+  };
+
+  UserModel.findByIdAndUpdate(userId, updateData, { new: true })
+    .then((updatedUser) => {
+      if (!updatedUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      return res.status(200).json(updatedUser);
+    })
+    .catch((err) => {
+      console.error("Error updating user:", err);
+      return res.status(500).json({ error: "Database error" });
+    });
+}
+
 module.exports = {
   default: defaultHandler,
   create,
   login,
   logout,
   usernameExists,
+  getAllUsers,
+  deleteUser,
+  updateUser,
 };

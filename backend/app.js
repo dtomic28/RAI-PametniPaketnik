@@ -12,7 +12,7 @@ const { db, mongoURI } = require("./db"); // This sets up the connection
 var userRouter = require("./routes/userRoutes");
 var tokenRouter = require("./routes/tokenRoutes");
 var lockboxRouter = require("./routes/lockboxRoutes");
-var transactionController = require("./routes/transactionRoutes");
+var transactionRouter = require("./routes/transactionRoutes");
 var itemsController = require("./routes/itemRoutes");
 
 var app = express();
@@ -88,7 +88,7 @@ app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api/user", userRouter);
 app.use("/api/token", tokenRouter);
 app.use("/api/lockbox", lockboxRouter);
-app.use("/api/transaction", transactionController);
+app.use("/api/transaction", transactionRouter);
 app.use("/api/item", itemsController);
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
