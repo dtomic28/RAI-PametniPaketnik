@@ -6,6 +6,8 @@ const fs = require("fs");
 const path = require("path");
 const TransactionModel = require('../models/transactionModel');
 const UserModel = require('../models/userModel');
+const fs = require('fs');
+const path = require('path');
 
 // GET /user
 function defaultHandler(req, res) {
@@ -94,7 +96,8 @@ async function getItemByID(req, res) {
       itemName: item.name,
       itemDescription: item.description,
       itemPrice: item.price,
-      boxID: lockbox ? lockbox.boxID : null
+      boxID: lockbox ? lockbox.boxID : null,
+      pathToImage: item.imageLink,
     });
 
   } catch (err) {
@@ -156,12 +159,18 @@ async function buyItem(req, res) {
     await lockbox.save();
 
     buyer.numberOfTransactions = (buyer.numberOfTransactions || 0) + 1;
-    await buyer.save();
+    await UserModel.updateOne(
+      { _id: buyer._id },
+      { $inc: { numberOfTransactions: 1 } }
+    );
 
     const seller = await UserModel.findById(transaction.sellerID);
     if (seller) {
       seller.numberOfTransactions = (seller.numberOfTransactions || 0) + 1;
-      await seller.save();
+        await UserModel.updateOne(
+          { _id: seller._id },
+          { $inc: { numberOfTransactions: 1 } }
+        );
     }
   } catch (err) {
     return res.status(500).json({ error: err.message });
@@ -171,6 +180,7 @@ async function buyItem(req, res) {
 }
 
 async function sellItem(req, res) {
+  // -------------------------------------------------- AUTH
   const authHeader = req.headers['authorization'];
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ error: `No token provided` });
@@ -184,22 +194,39 @@ async function sellItem(req, res) {
     return res.status(401).json({ error: 'Invalid token' });
   }
 
-  let { name, description, price, boxID } = req.body;
+  // -------------------------------------------------- VARIABLES
+  let { name, description, price, boxID, image } = req.body;
+  if (!name || !description || !price || !boxID || !image) {
+    return res.status(400).json({ error: `Missing required fields: name: ${!name}, description: ${!description}, price: ${!price}, boxID: ${!boxID}, image: ${!image}` });
+  }  
+
+  // -------------------------------------------------- PRICE
   if (typeof price === 'string') {
     price = parseFloat(price.replace(',', '.'));
   }
-  if (!name || !description || !price || !boxID) {
-    return res.status(400).json({ error: `Missing required fields: name: ${!name}, description: ${!description}, price: ${!price}, boxID: ${!boxID}` });
-  }
-
   
+  // -------------------------------------------------- IMAGE
+  if (!image) {
+    return res.status(400).json({ error: 'No image data provided' });
+  }
+  const base64Data = image.replace(/^data:image\/jpeg;base64,/, '');
+
+  const uniqueName = `img_${Date.now()}_${Math.floor(Math.random() * 10000)}.jpg`;
+  const imagePath = path.join(__dirname, '..', 'images', uniqueName);
+  fs.writeFile(imagePath, base64Data, 'base64', (err) => {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to save image' });
+    }
+  });
+
+  // -------------------------------------------------- ITEM
   try {
     const newItem = new ItemModel({
       name,
       description,
       price,
       isSelling: true,
-      imageLink: 'images/default.jpg'
+      imageLink: `images/${uniqueName}`
     });
     const savedItem = await newItem.save();
 
@@ -241,8 +268,27 @@ async function sellItem(req, res) {
     return res.status(500).json({ error: err.message });
   }
 
-  res.status(200).json({});
+  res.status(200).json({ });
 }
+
+async function storeImage(req, res) {
+  const { image } = req.body;
+  if (!image) {
+    return res.status(400).json({ error: 'No image data provided' });
+  }
+
+  const base64Data = image.replace(/^data:image\/jpeg;base64,/, '');
+
+  const uniqueName = `img_${Date.now()}_${Math.floor(Math.random() * 10000)}.jpg`;
+  const imagePath = path.join(__dirname, '..', 'images', uniqueName);
+  fs.writeFile(imagePath, base64Data, 'base64', (err) => {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to save image' });
+    }
+    res.status(200).json({ filePath: `images/${uniqueName}` });
+  });
+}
+
 
 module.exports = {
   default: defaultHandler,
@@ -252,5 +298,6 @@ module.exports = {
   deleteItem,
   getItemByID: getItemByID,
   buyItem: buyItem,
-  sellItem: sellItem 
+  sellItem: sellItem,
+  storeImage: storeImage
 };
