@@ -6,8 +6,6 @@ const fs = require("fs");
 const path = require("path");
 const TransactionModel = require('../models/transactionModel');
 const UserModel = require('../models/userModel');
-const fs = require('fs');
-const path = require('path');
 
 // GET /user
 function defaultHandler(req, res) {
