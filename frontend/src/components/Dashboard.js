@@ -221,7 +221,7 @@ export default function Dashboard() {
         fetchLockboxes();
         fetchItems();
         fetchUnwantedTransactions();
-    }, []);
+    }, [tab]);
 
     async function handleAddUser() {
         await fetch(`${window.REACT_APP_API_URL}/api/user/register`, {
