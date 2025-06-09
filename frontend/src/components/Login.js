@@ -83,15 +83,7 @@ function Login() {
         >
           Login
         </Button>
-        <Divider sx={{ my: 2 }}>OR</Divider>
-        <Button
-          variant="outlined"
-          startIcon={<FaceIcon />}
-          fullWidth
-          sx={{ mt: 1 }}
-        >
-          FaceID
-        </Button>
+       
         <Typography sx={{ mt: 2 }} align="center">
           {"Don't have an account? "}
           <Link
