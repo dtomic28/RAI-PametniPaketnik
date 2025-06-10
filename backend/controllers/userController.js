@@ -74,7 +74,6 @@ async function login(req, res, next) {
   }
 }
 
-
 async function loginAdmin(req, res, next) {
   try {
     const user = await UserModel.authenticate(
@@ -117,7 +116,6 @@ async function loginAdmin(req, res, next) {
     next(err);
   }
 }
-
 
 // POST /user/logout
 function logout(req, res, next) {

@@ -83,9 +83,7 @@ async function getTransactionByID(req, res) {
   }
 }
 
-
 //UPDATE /transaction/:id
-
 async function updateTransaction(req, res) {
   try {
     const transactionId = req.params.id;
@@ -232,6 +230,50 @@ async function createTransaction(req, res) {
   }
 }
 
+// GET /transaction/historyByID/:id
+async function getTransactionHistory(req, res) {
+  try {
+    const userId = req.params.id;
+    const transactions = await TransactionModel.find({
+      $or: [
+        { sellerID: userId },
+        { buyerID: userId }
+      ]
+    })
+      .populate("itemID")
+      .exec();
+
+    const items = transactions
+      .map(tx => tx.itemID)
+      .filter(item => item != null);
+
+    res.json(items);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
+// GET /transaction/activebyID/:id
+async function getActiveTransactions(req, res) {
+  try {
+    const userId = req.params.id;
+    const transactions = await TransactionModel.find({
+      sellerID: userId,
+      finishedSellingTime: null
+    })
+      .populate("itemID")
+      .exec();
+
+    const items = transactions
+      .map(tx => tx.itemID)
+      .filter(item => item != null && item.isSelling);
+
+    res.json(items);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
 module.exports = {
   default: defaultHandler,
   getAllCompletedTransactions,
@@ -240,4 +282,6 @@ module.exports = {
   getTransactionByID,
   updateTransaction,
   createTransaction,
+  getTransactionHistory,
+  getActiveTransactions,
 };
