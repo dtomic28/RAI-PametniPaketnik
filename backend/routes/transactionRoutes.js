@@ -80,7 +80,7 @@ router.post("/", transactionController.createTransaction);
 
 router.put("/:id", transactionController.updateTransaction);
 
-router.get("/transaction/historyByID/:id", transactionController.getTransactionHistory)
+router.get("/transaction/historyByUsername/:id", transactionController.getTransactionHistory)
 
-router.get("/transaction/activeByID/:id", transactionController.getActiveTransactions)
+router.get("/transaction/activeByUsername/:id", transactionController.getActiveTransactions)
 module.exports = router;

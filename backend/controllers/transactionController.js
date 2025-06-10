@@ -233,7 +233,13 @@ async function createTransaction(req, res) {
 // GET /transaction/historyByID/:id
 async function getTransactionHistory(req, res) {
   try {
-    const userId = req.params.id;
+    const username = req.params.id;
+    // Find the user by username
+    const user = await UserModel.findOne({ username: username }).exec();
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    const userId = user._id;
     const transactions = await TransactionModel.find({
       $or: [
         { sellerID: userId },
@@ -256,7 +262,13 @@ async function getTransactionHistory(req, res) {
 // GET /transaction/activebyID/:id
 async function getActiveTransactions(req, res) {
   try {
-    const userId = req.params.id;
+    const username = req.params.id;
+    // Find the user by username
+    const user = await UserModel.findOne({ username: username }).exec();
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    const userId = user._id;
     const transactions = await TransactionModel.find({
       sellerID: userId,
       finishedSellingTime: null
