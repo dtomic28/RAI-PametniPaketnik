@@ -175,13 +175,30 @@ export default function Dashboard() {
     }
 
     async function handleAddItem() {
+        let imageLink = null;
+        if (itemForm.image) {
+            const imgFd = new FormData();
+            imgFd.append("image", itemForm.image);
+            const imgRes = await fetch(`${window.REACT_APP_API_URL}/images`, {
+                method: "POST",
+                body: imgFd,
+            });
+            if (imgRes.ok) {
+                const imgJson = await imgRes.json();
+                imageLink = imgJson.filePath;
+            } else {
+                setError("Failed to upload image");
+                return;
+            }
+        }
+
         const formData = new FormData();
         formData.append("name", itemForm.name);
         formData.append("description", itemForm.description);
         formData.append("price", itemForm.price);
         formData.append("weight", itemForm.weight);
         formData.append("isSelling", itemForm.isSelling);
-        if (itemForm.image) formData.append("image", itemForm.image);
+        if (imageLink) formData.append("imageLink", imageLink);
 
         await fetch(`${window.REACT_APP_API_URL}/api/item`, {
             method: "POST",
@@ -192,13 +209,30 @@ export default function Dashboard() {
     }
 
     async function handleUpdateItem() {
+        let imageLink = null;
+        if (itemForm.image) {
+            const imgFd = new FormData();
+            imgFd.append("image", itemForm.image);
+            const imgRes = await fetch(`${window.REACT_APP_API_URL}/images`, {
+                method: "POST",
+                body: imgFd,
+            });
+            if (imgRes.ok) {
+                const imgJson = await imgRes.json();
+                imageLink = imgJson.filePath;
+            } else {
+                setError("Failed to upload image");
+                return;
+            }
+        }
+
         const formData = new FormData();
         formData.append("name", itemForm.name);
         formData.append("description", itemForm.description);
         formData.append("price", itemForm.price);
         formData.append("weight", itemForm.weight);
         formData.append("isSelling", itemForm.isSelling);
-        if (itemForm.image) formData.append("image", itemForm.image);
+        if (imageLink) formData.append("imageLink", imageLink);
 
         await fetch(`${window.REACT_APP_API_URL}/api/item/${editItem._id}`, {
             method: "PUT",

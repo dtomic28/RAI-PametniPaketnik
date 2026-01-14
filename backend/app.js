@@ -14,6 +14,7 @@ var tokenRouter = require("./routes/tokenRoutes");
 var lockboxRouter = require("./routes/lockboxRoutes");
 var transactionRouter = require("./routes/transactionRoutes");
 var itemsController = require("./routes/itemRoutes");
+var imageRouter = require("./routes/imageRoutes");
 
 var app = express();
 
@@ -90,7 +91,7 @@ app.use("/api/token", tokenRouter);
 app.use("/api/lockbox", lockboxRouter);
 app.use("/api/transaction", transactionRouter);
 app.use("/api/item", itemsController);
-app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/images', imageRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

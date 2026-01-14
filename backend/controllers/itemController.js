@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken");
 const { isUsernameAllowedByOrv } = require("../utils/orvValidator");
 const fs = require("fs");
 const path = require("path");
+const fsp = require("fs").promises;
+const imageProcessor = require("../utils/imageProcessor");
 const TransactionModel = require('../models/transactionModel');
 const UserModel = require('../models/userModel');
 
@@ -32,13 +34,44 @@ function getSellingItems(req, res) {
 async function createItem(req, res) {
   try {
     const { name, description, price, weight, isSelling } = req.body;
+
+    let imageLink = null;
+    if (req.file) {
+      let buffer;
+      if (req.file.buffer) {
+        buffer = req.file.buffer;
+      } else if (req.file.path) {
+        buffer = await fsp.readFile(req.file.path);
+      }
+
+      if (buffer) {
+        try {
+          const { compressed, format } = await imageProcessor.compressBuffer(buffer);
+          const uniqueName = `img_${Date.now()}_${Math.floor(Math.random() * 10000)}.bin`;
+          const outPath = path.join(__dirname, "..", "images", uniqueName);
+          await fsp.writeFile(outPath, compressed);
+        } catch (err) {
+          console.error('image compress error (create):', err);
+          return res.status(500).json({ error: 'Failed to process image' });
+        }
+      }
+
+      if (req.file.path) {
+        fsp.unlink(req.file.path).catch(() => {});
+      }
+    }
+
+    if (!imageLink && req.body && req.body.imageLink) {
+      imageLink = req.body.imageLink;
+    }
+
     const item = new ItemModel({
       name,
       description,
       price,
       weight,
       isSelling: isSelling === "true" || isSelling === true,
-      imageLink: req.file ? req.file.path.replace(/\\/g, "/") : "images/default.jpg",
+      imageLink: imageLink || "images/default.jpg",
     });
     await item.save();
     res.status(201).json(item);
@@ -58,8 +91,35 @@ async function updateItem(req, res) {
       isSelling: isSelling === "true" || isSelling === true,
     };
     if (req.file) {
-      updateData.imageLink = req.file.path.replace(/\\/g, "/");
+      let buffer;
+      if (req.file.buffer) {
+        buffer = req.file.buffer;
+      } else if (req.file.path) {
+        buffer = await fsp.readFile(req.file.path);
+      }
+
+      if (buffer) {
+        try {
+          const { compressed, format } = await imageProcessor.compressBuffer(buffer);
+          const uniqueName = `img_${Date.now()}_${Math.floor(Math.random() * 10000)}.bin`;
+          const outPath = path.join(__dirname, "..", "images", uniqueName);
+          await fsp.writeFile(outPath, compressed);
+          const metaPath = outPath + ".json";
+          await fsp.writeFile(metaPath, JSON.stringify({ format }));
+          updateData.imageLink = `images/${uniqueName}`;
+        } catch (err) {
+          console.error('image compress error:', err);
+          return res.status(500).json({ error: 'Failed to process image' });
+        }
+      }
+
+      if (req.file.path) {
+        fsp.unlink(req.file.path).catch(() => {});
+      }
     }
+      if (!updateData.imageLink && req.body && req.body.imageLink) {
+        updateData.imageLink = req.body.imageLink;
+      }
     const item = await ItemModel.findByIdAndUpdate(req.params.id, updateData, { new: true });
     res.json(item);
   } catch (err) {
