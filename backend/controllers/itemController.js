@@ -237,7 +237,7 @@ async function buyItem(req, res) {
   res.status(200).json({ user: userID, item : itemID});
 }
 
-async function sellItem(req, res) {
+async function sellItem2(req, res) {
   // -------------------------------------------------- AUTH
   const authHeader = req.headers['authorization'];
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -328,6 +328,101 @@ async function sellItem(req, res) {
 
   res.status(200).json({ });
 }
+
+async function sellItem(req, res) {
+  // -------------------------------------------------- AUTH
+  const authHeader = req.headers["authorization"];
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "No token provided" });
+  }
+  const token = authHeader.split(" ")[1];
+
+  let userID;
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    userID = decoded.username;
+  } catch (err) {
+    return res.status(401).json({ error: "Invalid token" });
+  }
+
+  // -------------------------------------------------- VARIABLES
+  let { name, description, price, boxID, imageLink } = req.body;
+
+  // NOTE: changed from `image` to `imageLink`
+  if (!name || !description || !price || !boxID || !imageLink) {
+    return res.status(400).json({
+      error: `Missing required fields: name: ${!name}, description: ${!description}, price: ${!price}, boxID: ${!boxID}, imageLink: ${!imageLink}`,
+    });
+  }
+
+  // -------------------------------------------------- PRICE
+  if (typeof price === "string") {
+    price = parseFloat(price.replace(",", "."));
+  }
+  if (Number.isNaN(price)) {
+    return res.status(400).json({ error: "Invalid price" });
+  }
+
+  // -------------------------------------------------- ITEM + LOCKBOX + TRANSACTION (same behavior as before)
+  let savedItem = null;
+  try {
+    const seller = await UserModel.findOne({ username: userID });
+    if (!seller) {
+      return res.status(404).json({ error: "Seller not found" });
+    }
+
+    const lockbox = await LockboxModel.findOne({ boxID });
+    if (!lockbox) {
+      return res.status(404).json({ error: "Lockbox not found" });
+    }
+    if (lockbox.storedItem) {
+      return res.status(409).json({ error: "Lockbox already contains an item" });
+    }
+
+    // Create item pointing at the uploaded .bin path (or legacy jpg path)
+    const newItem = new ItemModel({
+      name,
+      description,
+      price,
+      isSelling: true,
+      imageLink: imageLink, // <-- key change
+    });
+    savedItem = await newItem.save();
+
+    // Lock the box immediately
+    lockbox.storedItem = savedItem._id;
+    lockbox.lastOpenedTime = new Date();
+    lockbox.lastOpenedPerson = seller._id;
+    await lockbox.save();
+
+    // Create transaction
+    const newTransaction = new TransactionModel({
+      lockboxID: lockbox._id,
+      sellerID: seller._id,
+      itemID: savedItem._id,
+      startedSellingTime: new Date(),
+    });
+    await newTransaction.save();
+
+    return res.status(200).json({ itemID: savedItem._id });
+  } catch (err) {
+    // If item was created but later steps failed, clean it up
+    if (savedItem?._id) {
+      await ItemModel.findByIdAndDelete(savedItem._id).catch(() => {});
+    }
+
+    // Optional: also delete uploaded image to avoid orphan files
+    // Only do this if you are sure imageLink always points into your local /images folder.
+    try {
+      if (imageLink && imageLink.startsWith("images/")) {
+        fs.unlink(path.join(__dirname, "..", imageLink), () => {});
+      }
+    } catch (_) {}
+
+    return res.status(500).json({ error: err.message });
+  }
+}
+
 
 async function storeImage(req, res) {
   const { image } = req.body;
